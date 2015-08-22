@@ -96,6 +96,15 @@ body {
 }
 
 .battle_widget {
+    .battle_interface {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 1;
+    }
+
     .party_widget {
         padding-left: 5px;
         padding-right: 5px;
@@ -119,6 +128,34 @@ body {
             &.acitve {
                 top: -5px;
             }
+        }
+    }
+
+    .debug_frame {
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+
+    .enemy_list_widget {
+        position: absolute;
+        top: 0;
+        right: 0;
+    }
+
+    .battle_field_widget {
+        position: absolute;
+        top: 20px;
+        bottom: 50px;
+        left: 0;
+        right: 0;
+        background: green;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        .enemy_sprite {
+            margin: 20px;
         }
     }
 }

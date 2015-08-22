@@ -12,6 +12,12 @@ R.component "Game", {
         new L.Player "Lee"
         new L.Player "Iman"
       ]
+
+      enemy_party: new L.Party [
+        new L.Enemy
+        new L.Enemy
+      ]
+
     }
 
   componentDidMount: ->

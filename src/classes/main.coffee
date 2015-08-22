@@ -31,6 +31,13 @@ class L.Entity
       mdef: 1
     }
 
+
+class L.Enemy extends L.Entity
+  name: "Ragr"
+
+  constructor: (name) ->
+    @name = name if name?
+
 class L.Player extends L.Entity
   name: "Sab"
 
@@ -88,4 +95,5 @@ class L.BattleEntity
 class L.Party
   constructor: (players) ->
     @players = Immutable.List players
+
 

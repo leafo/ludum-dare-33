@@ -44,10 +44,48 @@ R.component "Battle", {
     div {
       className: "battle_widget"
       children: [
-        R.BattleParty @extend_props @state, { ref: "battle_party" }
-        div className: "frame", "Phase: #{@state.phase}"
+        div className: "battle_interface", children: [
+          R.BattleEnemyList @extend_props @state
+          R.BattleParty @extend_props @state
+          div className: "frame debug_frame", "Phase: #{@state.phase}"
+        ]
+
+        R.BattleField @extend_props @state
       ]
     }
+}
+
+R.component "BattleField", {
+  propTypes: {
+    enemy_party: React.PropTypes.any.isRequired
+  }
+
+  render: ->
+    div className: "battle_field_widget", children: @render_enemies()
+
+  render_enemies: ->
+    for enemy in @props.enemy_party.players.toArray()
+      div {
+        className: "enemy_sprite"
+        style: {
+          background: "rgba(255,100,100,0.8)"
+          width: "50px"
+          height: "50px"
+        }
+      }
+}
+
+R.component "BattleEnemyList", {
+  propTypes: {
+    enemy_party: React.PropTypes.any.isRequired
+  }
+
+  render: ->
+    div className: "enemy_list_widget frame", children: @render_enemies()
+
+  render_enemies: ->
+    for enemy in @props.enemy_party.players.toArray()
+      div { className: "enemy_row" }, "#{enemy.name}"
 }
 
 R.component "BattleParty", {
@@ -78,8 +116,6 @@ R.component "BattleParty", {
     current = @props.party.players.get(@props.current_player)
 
     R.ChoiceDialog {
-      ref: "command_menu"
-
       classes: if @props.command_erroring
         ["animated shake"]
 
@@ -90,9 +126,12 @@ R.component "BattleParty", {
       ]
     }
 
+  phase: (name) ->
+    name == @props.phase
+
   render_party: ->
     frames = for player, i in @props.party.players.toArray()
-      classes = if @props.phase == "enter_commands" && @props.current_player == i
+      classes = if @phase("enter_commands") && @props.current_player == i
         "acitve"
       else
         ""
