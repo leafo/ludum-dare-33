@@ -28,8 +28,16 @@ R.component "Game", {
 }
 
 R.component "MainMenu", {
+  getInitialState: -> {}
+
   componentDidMount: ->
     @dispatch {
+      cancel: =>
+        return if @state.erroring
+        @setState erroring: true
+        $(@getDOMNode()).one "animationend", =>
+          @setState erroring: false
+
       choose: (e, val) =>
         switch val
           when "Battle"
@@ -39,10 +47,15 @@ R.component "MainMenu", {
   render: ->
     div className: "main_menu_widget", children: [
       div className: "dialog_widget", "What do you want to do?"
-      R.ChoiceDialog choices: [
-        "Battle"
-        "Nothing"
-      ]
+      R.ChoiceDialog {
+        classes: if @state.erroring
+          ["animated shake"]
+
+        choices: [
+          "Battle"
+          "Nothing"
+        ]
+      }
     ]
 }
 
@@ -67,6 +80,9 @@ R.component "ChoiceDialog", {
     @unbind_keys = R.key_input {
       up: @move_up
       down: @move_down
+      cancel: =>
+        @trigger "cancel"
+
       confirm: =>
         selected = @props.choices[@state.selected_choice]
         value = if selected instanceof Array
@@ -82,8 +98,10 @@ R.component "ChoiceDialog", {
     @unbind_keys()
 
   render: ->
+    classes = _.compact(@props.classes).join " "
+
     div {
-      className: "choice_dialog_widget"
+      className: "choice_dialog_widget #{classes}"
       children: @render_choices()
     }
 

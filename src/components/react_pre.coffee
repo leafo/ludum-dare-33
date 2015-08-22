@@ -14,6 +14,7 @@ R.dispatch = (c, event_table) ->
 
 key_aliases = {
   confirm: ["space", "enter"]
+  cancel: ["escape"]
 }
 
 R.key_input = (tbl) ->

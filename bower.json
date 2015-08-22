@@ -17,6 +17,8 @@
     "jquery": "~2.1.4",
     "react": "~0.13.3",
     "keymaster": "~1.6.3",
-    "immutable": "~3.7.4"
+    "immutable": "~3.7.4",
+    "animate.css": "~3.4.0",
+    "underscore": "~1.8.3"
   }
 }

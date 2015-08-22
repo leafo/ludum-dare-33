@@ -63,6 +63,10 @@ body {
     display: inline-block;
     margin-top: 0;
 
+    &.animated {
+        @include prefixed(animation-duration, 0.5s);
+    }
+
     .choice {
         margin-bottom: 5px;
 
