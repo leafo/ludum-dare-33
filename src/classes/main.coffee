@@ -113,6 +113,13 @@ class L.Party
 
   random_member: ->
 
+  next_living_member: (idx=-1, direction=1) =>
+    while true
+      idx += direction
+      m = @members.get idx
+      return unless m
+      return m unless m.is_dead()
+
   get: (idx) ->
     @members.get idx
 

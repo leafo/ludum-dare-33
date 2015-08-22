@@ -5,11 +5,11 @@ R.component "Battle", {
   }
 
   getInitialState: ->
-    first_member = @props.battle.player_party.living_members().first()
+    first_member = @props.battle.player_party.next_living_member()
 
     {
       phase: "enter_commands"
-      current_player: null
+      current_player: first_member.id
       orders: Immutable.Map {}
       events: null
     }
@@ -23,30 +23,32 @@ R.component "Battle", {
   componentDidMount: ->
     @dispatch {
       undo_orders: (e, menu) =>
-        next_player = @state.current_player - 1
-        if next_player >= 0
-          @setState {
-            current_player: next_player
-          }
+        party = @props.battle.player_party
+        prev_player = party.next_living_member @state.current_player, -1
+
+        if prev_player
+          @setState current_player: prev_player.id
         else
           @setState command_erroring: true
           $(menu).one "animationend", =>
             @setState command_erroring: false
 
       set_orders: (e, order) =>
-        next_player = @state.current_player + 1
-        party_size = @props.battle.player_party.members.size
+        party = @props.battle.player_party
+        next_player = party.next_living_member @state.current_player
 
-        phase = if next_player >= party_size
-          "executing"
+        orders = @state.orders.set @state.current_player, order
+
+        if next_player
+          @setState {
+            orders: orders
+            current_player: next_player.id
+          }
         else
-          @state.phase
-
-        @setState {
-          phase: phase
-          orders: @state.orders.set @state.current_player, order
-          current_player: next_player
-        }
+          @setState {
+            phase: "executing"
+            orders: orders
+          }
 
     }
 
