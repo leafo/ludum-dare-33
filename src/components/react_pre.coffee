@@ -18,14 +18,21 @@ key_aliases = {
 
 R.key_input = (tbl) ->
   for own key_name, fn of tbl
-    if key_names = key_aliases[key_name]
-      for key_name in key_names
-        key key_name, fn
-    else
-      key key_name, fn
+    do (fn) ->
+      wrapped = (e) ->
+        e.preventDefault()
+        fn()
+
+      if key_names = key_aliases[key_name]
+        for key_name in key_names
+          key key_name, wrapped
+      else
+        key key_name, wrapped
 
   ->
-    for own key_name, fn of tbl
+    console.log "unbinding keys"
+
+    for own key_name of tbl
       if key_names = key_aliases[key_name]
         for key_name in key_names
           key.unbind key_name

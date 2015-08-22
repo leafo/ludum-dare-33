@@ -34,7 +34,9 @@ class L.Entity
 class L.Player extends L.Entity
   name: "Sab"
 
-  constructor: ->
+  constructor: (name) ->
+    @name = name if name?
+
     super
     @level = L.Level()
     @stat_progress = L.Stats()
