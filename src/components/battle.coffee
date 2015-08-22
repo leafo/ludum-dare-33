@@ -63,7 +63,7 @@ R.component "Battle", {
         @setState events: events.shift()
         setTimeout =>
           @run_event()
-        , 300
+        , 100
     else
       # all done, reset
       @setState @getInitialState()

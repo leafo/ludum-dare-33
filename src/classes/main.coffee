@@ -116,4 +116,3 @@ class L.Party
   get: (idx) ->
     @members.get idx
 
-

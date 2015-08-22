@@ -20,6 +20,8 @@ class L.Battle
 
   # finds battle entity
   find_target: ([type, idx]) ->
+    # TODO: use random member if no idx
+
     party = switch type
       when "enemy"
         @enemy_party
@@ -37,13 +39,14 @@ class L.Battle
   # get a map of player orders,
   # returns mutable array of callbacks :o
   run_turn: (orders) ->
-    # enemy_orders = @enemy_party.members.map (enemy) ->
-    #   ["attack"]
+    enemy_orders = @enemy_party.members.map (enemy) ->
+      [enemy.id, ["attack", ["player"]]]
 
-    enemy_orders = {}
+    enemy_orders = Immutable.Map(enemy_orders).toJS()
 
     actions = for battle_entity in @all_entities().toArray()
       entity = battle_entity.entity
+      continue if entity.is_dead()
 
       order = if entity instanceof L.Player
         orders[battle_entity.id]

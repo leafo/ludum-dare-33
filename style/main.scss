@@ -39,7 +39,7 @@ body {
 .game_frame {
     @include border_box;
     @include unselectable;
-    pointer-events: none;
+    // pointer-events: none;
     width: 420px;
     height: 262px;
     box-shadow: 0 0 0 2px #222;
