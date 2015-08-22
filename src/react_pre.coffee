@@ -12,6 +12,26 @@ R.dispatch = (c, event_table) ->
   for own event_name, fn of event_table
     node.on R.scope_event_name(event_name), fn
 
+key_aliases = {
+  confirm: ["space", "enter"]
+}
+
+R.key_input = (tbl) ->
+  for own key_name, fn of tbl
+    if key_names = key_aliases[key_name]
+      for key_name in key_names
+        key key_name, fn
+    else
+      key key_name, fn
+
+  ->
+    for own key_name, fn of tbl
+      if key_names = key_aliases[key_name]
+        for key_name in key_names
+          key.unbind key_name
+      else
+        key.unbind key_name
+
 R.component = (name, data) ->
   data.trigger = ->
     R.trigger @, arguments...
