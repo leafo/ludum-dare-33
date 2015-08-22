@@ -39,6 +39,12 @@ body {
 }
 
 .dialog_widget {
+    @include grad(#5899F7, darken(#5899F7, 10%));
+    color: white;
+    border: 3px solid white;
+    border-radius: 2px;
+    margin: 10px;
+    padding: 5px;
 }
 
 
