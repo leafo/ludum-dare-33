@@ -39,6 +39,7 @@ R.component "MainMenu", {
           @setState erroring: false
 
       choose: (e, val) =>
+        e.stopPropagation()
         switch val
           when "Battle"
             @trigger "set_view", "Battle"

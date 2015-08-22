@@ -1,5 +1,10 @@
 window.R = {}
 
+R.key_listener = ->
+  l = new keypress.Listener
+  R.key_listener = -> l
+  l
+
 R.scope_event_name = (name) ->
   "leaf:#{name}"
 
@@ -18,27 +23,27 @@ key_aliases = {
 }
 
 R.key_input = (tbl) ->
-  for own key_name, fn of tbl
-    do (fn) ->
-      wrapped = (e) ->
-        e.preventDefault()
-        fn()
+  l = R.key_listener()
 
-      if key_names = key_aliases[key_name]
-        for key_name in key_names
-          key key_name, wrapped
-      else
-        key key_name, wrapped
+  listeners = []
+
+  for own key_name, fn of tbl
+    if key_names = key_aliases[key_name]
+      for key_name in key_names
+        listeners.push {
+          keys: key_name
+          on_keydown: fn
+        }
+    else
+      listeners.push {
+        keys: key_name
+        on_keydown: fn
+      }
+
+  unbind = l.register_many listeners
 
   ->
-    console.log "unbinding keys"
-
-    for own key_name of tbl
-      if key_names = key_aliases[key_name]
-        for key_name in key_names
-          key.unbind key_name
-      else
-        key.unbind key_name
+    l.unregister_many unbind
 
 R.component = (name, data) ->
   data.trigger = ->
