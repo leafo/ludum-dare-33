@@ -33,8 +33,9 @@ R.component "Battle", {
 
       set_orders: (e, order) =>
         next_player = @state.current_player + 1
+        party_size = @props.battle.player_party.members.size
 
-        phase = if next_player >= @props.party.members.size
+        phase = if next_player >= party_size
           "executing"
         else
           @state.phase
@@ -76,18 +77,18 @@ R.component "Battle", {
 }
 
 R.component "BattleField", {
-  propTypes: {
-    enemy_party: React.PropTypes.any.isRequired
-  }
-
   render: ->
     div className: "battle_field_widget", children: @render_enemies()
 
   render_enemies: ->
-    for enemy in @props.enemy_party.to_array()
+    for enemy in @props.battle.enemy_party.to_array()
       div {
         className: "enemy_sprite"
         style: {
+          opacity: if enemy.is_dead()
+            "0"
+          else
+            "1"
           background: "rgba(255,100,100,0.8)"
           width: "50px"
           height: "50px"
@@ -96,16 +97,14 @@ R.component "BattleField", {
 }
 
 R.component "BattleEnemyList", {
-  propTypes: {
-    enemy_party: React.PropTypes.any.isRequired
-  }
-
   render: ->
     div className: "enemy_list_widget frame", children: @render_enemies()
 
   render_enemies: ->
-    for enemy in @props.enemy_party.to_array()
-      div { className: "enemy_row" }, "#{enemy.name}"
+    for enemy in @props.battle.enemy_party.to_array()
+      stats = enemy.battle_stats
+
+      div { className: "enemy_row" }, "#{enemy.entity.name} (#{stats.get("hp")}/#{stats.get("max_hp")})"
 }
 
 R.component "BattleParty", {
@@ -172,7 +171,7 @@ R.component "BattleParty", {
   render_battle_menu: ->
     return unless @props.phase == "enter_commands"
     # TODO: use this to customize menu
-    current = @props.party.get @props.current_player
+    current = @props.battle.player_party.get @props.current_player
 
     menus = for menu, i in @state.menu_stack.toArray()
       top = i == @state.menu_stack.size - 1
@@ -194,15 +193,15 @@ R.component "BattleParty", {
         when "enemies"
           R.ChoiceDialog {
             inactive: !top
-            choices: for e, id in @props.enemy_party.to_array()
-              [e.name, ["enemy", id]]
+            choices: for e, id in @props.battle.enemy_party.to_array()
+              [e.entity.name, ["enemy", id]]
           }
 
         when "players"
           R.ChoiceDialog {
             inactive: !top
-            choices: for e, id in @props.party.to_array()
-              [e.name, ["player", id]]
+            choices: for e, id in @props.battle.player_party.to_array()
+              [e.entity.name, ["player", id]]
           }
         else
           throw "unknown menu in stack: #{menu}"
@@ -213,7 +212,10 @@ R.component "BattleParty", {
     name == @props.phase
 
   render_party: ->
-    frames = for player, i in @props.party.to_array()
+    frames = for battle_player, i in @props.battle.player_party.to_array()
+      player = battle_player.entity
+      battle_stats = battle_player.battle_stats
+
       classes = if @phase("enter_commands") && @props.current_player == i
         "acitve"
       else
@@ -230,7 +232,7 @@ R.component "BattleParty", {
 
         div {}, "#{player.name}"
         div { className: "stat_row" },
-          "HP: #{player.stats.get("hp")} MP: #{player.stats.get("mp")}"
+          "HP: #{battle_stats.get("hp")} MP: #{battle_stats.get("mp")}"
       ]
 
     div className: "player_frames", children: frames
