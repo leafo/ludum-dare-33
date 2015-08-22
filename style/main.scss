@@ -1,5 +1,8 @@
 @import "common";
 
+$blue: #5899F7;
+$red: #F13A2B;
+
 @font-face {
     font-family: "terminus";
     src: url("fonts/terminus/TerminusTTF-4.39.ttf");
@@ -9,6 +12,15 @@
     font-family: "terminus";
     font-weight: bold;
     src: url("fonts/terminus/TerminusTTF-Bold-4.39.ttf");
+}
+
+@mixin dialog_frame {
+    @include grad($blue, darken($blue, 10%));
+    color: white;
+    border: 3px solid white;
+    border-radius: 2px;
+    margin: 10px;
+    padding: 5px;
 }
 
 body {
@@ -30,6 +42,7 @@ body {
     box-shadow: 0 0 0 2px #222;
     border-radius: 2px;
     margin: auto auto;
+    background: #999;
 
     position: absolute;
     top: 0;
@@ -39,12 +52,40 @@ body {
 }
 
 .dialog_widget {
-    @include grad(#5899F7, darken(#5899F7, 10%));
-    color: white;
-    border: 3px solid white;
-    border-radius: 2px;
-    margin: 10px;
-    padding: 5px;
+    @include dialog_frame;
+}
+
+.choice_dialog_widget {
+    @include dialog_frame;
+
+    .choice {
+        margin-bottom: 5px;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+
+        &.selected {
+            .selector {
+                background: $red;
+            }
+        }
+
+        .selector {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background: transparent;
+            border: 1px solid white;
+            border-radius: 2px;
+            vertical-align: -1px;
+            margin-right: 5px;
+        }
+
+        .choice_label {
+        }
+    }
+
 }
 
 
