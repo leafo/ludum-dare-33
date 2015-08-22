@@ -1,0 +1,20 @@
+{
+  "name": "ludum-dare-33",
+  "version": "0.0.0",
+  "homepage": "https://github.com/leafo/ludum-dare-33",
+  "authors": [
+    "leaf corcoran <leafot@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~2.1.4",
+    "react": "~0.13.3"
+  }
+}
