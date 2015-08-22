@@ -37,6 +37,8 @@ class L.Entity
       mdef: 1
     }
 
+  is_dead: =>
+    @stats.get("hp") == 0
 
 class L.Enemy extends L.Entity
   name: "Ragr"
@@ -105,6 +107,9 @@ class L.Party
 
   to_array: ->
     @members.toArray()
+
+  living_members: ->
+    @members.filter((e) -> !e.is_dead()).toArray()
 
   get: (idx) ->
     @members.get idx

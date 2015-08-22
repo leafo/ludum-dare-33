@@ -101,6 +101,7 @@ R.component "ChoiceDialog", {
 
       confirm: =>
         selected = @props.choices[@state.selected_choice]
+
         value = if selected instanceof Array
           selected[1]
         else

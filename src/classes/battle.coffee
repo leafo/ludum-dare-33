@@ -1,10 +1,10 @@
 class L.Battle
   constructor: (player_party, enemy_party) ->
-    @player_party = new L.Party player_party.members.map (e) ->
-      new L.BattleEntity e
+    @player_party = new L.Party player_party.members.map (e, i) ->
+      new L.BattleEntity i, e
 
-    @enemy_party = new L.Party enemy_party.members.map (e) ->
-      new L.BattleEntity e
+    @enemy_party = new L.Party enemy_party.members.map (e, i) ->
+      new L.BattleEntity i, e
 
   all_entities: ->
     tuples = @player_party.members.map (e, idx) -> [e, idx]
@@ -21,7 +21,7 @@ class L.Battle
       else
         throw "unknown target type: #{type}"
 
-    party.get(idx)
+    party.get idx
 
   # get a map of player orders,
   # returns mutable array of callbacks :o
@@ -46,7 +46,7 @@ class L.Battle
     Immutable.List _.compact actions
 
 class L.BattleEntity
-  constructor: (@entity) ->
+  constructor: (@id, @entity) ->
     @battle_stats = @entity.stats
   
   is_dead: =>
@@ -54,3 +54,7 @@ class L.BattleEntity
 
   take_hit: (attacker) ->
     console.debug "#{@entity.name} being hit by #{attacker.entity.name}"
+    @battle_stats = @battle_stats.merge {
+      hp: Math.max 0, @battle_stats.get("hp") - 8
+    }
+

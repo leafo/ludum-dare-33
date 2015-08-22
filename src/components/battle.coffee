@@ -81,14 +81,15 @@ R.component "BattleField", {
     div className: "battle_field_widget", children: @render_enemies()
 
   render_enemies: ->
-    for enemy in @props.battle.enemy_party.to_array()
+    for enemy, idx in @props.battle.enemy_party.to_array()
+      classes = _.compact([
+        "enemy_sprite"
+      ]).join " "
+
       div {
-        className: "enemy_sprite"
+        className: classes
         style: {
-          opacity: if enemy.is_dead()
-            "0"
-          else
-            "1"
+          opacity: if enemy.is_dead() then "0" else "1"
           background: "rgba(255,100,100,0.8)"
           width: "50px"
           height: "50px"
@@ -161,7 +162,6 @@ R.component "BattleParty", {
                 }
                 return
 
-
         # fall through, send the orders
         @trigger "set_orders", orders
         @reset_menu()
@@ -193,15 +193,15 @@ R.component "BattleParty", {
         when "enemies"
           R.ChoiceDialog {
             inactive: !top
-            choices: for e, id in @props.battle.enemy_party.to_array()
-              [e.entity.name, ["enemy", id]]
+            choices: for e in @props.battle.enemy_party.living_members()
+              [e.entity.name, ["enemy", e.id]]
           }
 
         when "players"
           R.ChoiceDialog {
             inactive: !top
-            choices: for e, id in @props.battle.player_party.to_array()
-              [e.entity.name, ["player", id]]
+            choices: for e in @props.battle.player_party.to_array()
+              [e.entity.name, ["player", e.id]]
           }
         else
           throw "unknown menu in stack: #{menu}"
