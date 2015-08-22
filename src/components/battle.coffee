@@ -9,15 +9,14 @@ R.component "Battle", {
       phase: "enter_commands"
       current_player: 0
       orders: Immutable.Map {}
+      events: null
     }
 
   componentDidUpdate: (prev_props, prev_state) ->
     if @state.phase == "executing" && prev_state.phase != "executing"
-      @props.battle.run_turn @state.orders.toJS()
-
-      setTimeout =>
-        @setState @getInitialState()
-      , 1000
+      events = @props.battle.run_turn @state.orders.toJS()
+      console.debug "Got #{events.size} events..."
+      @run_event events
 
   componentDidMount: ->
     @dispatch {
@@ -47,6 +46,19 @@ R.component "Battle", {
         }
 
     }
+
+  run_event: (events) ->
+    events ||= @state.events
+    next_event = events.first()
+    if next_event
+      next_event()
+      @setState events: events.shift()
+      setTimeout =>
+        @run_event()
+      , 300
+    else
+      # all done, reset
+      @setState @getInitialState()
 
   render: ->
     div {
