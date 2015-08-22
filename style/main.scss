@@ -144,8 +144,18 @@ body {
             flex-grow: 1;
             position: relative;
 
+
             &.acitve {
                 top: -5px;
+            }
+
+            .current_order {
+                position: absolute;
+                top: 0;
+                right: 0;
+                font-size: 12px;
+                background: #A365D2;
+                padding: 2px 4px;
             }
         }
     }

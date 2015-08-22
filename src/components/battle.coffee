@@ -207,6 +207,14 @@ R.component "BattleParty", {
         ""
 
       div className: "frame #{classes}", children: [
+        if orders = @props.orders.get(i)
+          orders = orders.toJS()
+          div className: "current_order", ({
+            attack: "ATK"
+            defend: "DEF"
+            skill: "SKL"
+          })[orders[0]]
+
         div {}, "#{player.name}"
         div { className: "stat_row" },
           "HP: #{player.stats.get("hp")} MP: #{player.stats.get("mp")}"
