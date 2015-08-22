@@ -35,7 +35,7 @@ R.component "Battle", {
       set_orders: (e, order) =>
         next_player = @state.current_player + 1
 
-        phase = if next_player >= @props.party.players.size
+        phase = if next_player >= @props.party.members.size
           "executing"
         else
           @state.phase
@@ -159,7 +159,8 @@ R.component "BattleParty", {
 
   render_battle_menu: ->
     return unless @props.phase == "enter_commands"
-    current = @props.party.players.get(@props.current_player)
+    # TODO: use this to customize menu
+    current = @props.party.get @props.current_player
 
     menus = for menu, i in @state.menu_stack.toArray()
       top = i == @state.menu_stack.size - 1

@@ -94,9 +94,12 @@ class L.BattleEntity
 
 class L.Party
   to_array: ->
-    @players.toArray()
+    @members.toArray()
 
-  constructor: (players) ->
-    @players = Immutable.List players
+  get: (idx) ->
+    @members.get idx
+
+  constructor: (members) ->
+    @members = Immutable.List members
 
 
