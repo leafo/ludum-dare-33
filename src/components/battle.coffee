@@ -13,6 +13,8 @@ R.component "Battle", {
 
   componentDidUpdate: (prev_props, prev_state) ->
     if @state.phase == "executing" && prev_state.phase != "executing"
+      console.log "orders:", @state.orders.toJS()
+
       setTimeout =>
         @setState @getInitialState()
       , 1000
@@ -141,6 +143,13 @@ R.component "BattleParty", {
                   order_stack: orders
                 }
                 return
+              when "skill"
+                @setState {
+                  menu_stack: @state.menu_stack.push "players"
+                  order_stack: orders
+                }
+                return
+
 
         # fall through, send the orders
         @trigger "set_orders", orders
@@ -173,9 +182,15 @@ R.component "BattleParty", {
           R.ChoiceDialog {
             inactive: !top
             choices: for e, id in @props.enemy_party.to_array()
-              [e.name, id]
+              [e.name, ["enemy", id]]
           }
 
+        when "players"
+          R.ChoiceDialog {
+            inactive: !top
+            choices: for e, id in @props.party.to_array()
+              [e.name, ["player", id]]
+          }
         else
           throw "unknown menu in stack: #{menu}"
 
