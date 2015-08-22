@@ -83,8 +83,11 @@ R.component "ChoiceDialog", {
       selected_choice: (@state.selected_choice + 1) % @props.choices.length
     }
 
-  componentDidMount: ->
-    @unbind_keys = R.key_input {
+  bind_keys: ->
+    if @_unbind_keys
+      throw "keys already bound"
+
+    @_unbind_keys = R.key_input {
       up: @move_up
       down: @move_down
       cancel: =>
@@ -101,11 +104,27 @@ R.component "ChoiceDialog", {
 
     }
 
+  unbind_keys: ->
+    @_unbind_keys?()
+    delete @_unbind_keys
+
+  componentDidUpdate: (prev_props) ->
+    if @props.inactive && !prev_props.inactive
+      @unbind_keys()
+
+    if !@props.inactive && prev_props.inactive
+      @bind_keys()
+
+  componentDidMount: ->
+    @bind_keys() unless @props.inactive
+
   componentWillUnmount: ->
     @unbind_keys()
 
   render: ->
     classes = _.compact(@props.classes).join " "
+    if @props.inactive
+      classes += " inactive"
 
     div {
       className: "choice_dialog_widget #{classes}"
