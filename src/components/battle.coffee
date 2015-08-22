@@ -13,7 +13,7 @@ R.component "Battle", {
 
   componentDidUpdate: (prev_props, prev_state) ->
     if @state.phase == "executing" && prev_state.phase != "executing"
-      console.log "orders:", @state.orders.toJS()
+      @props.battle.run_turn @state.orders.toJS()
 
       setTimeout =>
         @setState @getInitialState()

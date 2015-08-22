@@ -86,6 +86,23 @@ class L.Player extends L.Entity
     @stat_progress = @stat_progress.map (v, k) ->
       v - Math.floor v
 
+
+class L.Battle
+  constructor: (player_party, enemy_party) ->
+    @player_party = player_party.members.map (e) ->
+      new L.BattleEntity e
+
+    @enemy_party = enemy_party.members.map (e) ->
+      new L.BattleEntity e
+
+  all_entities: ->
+    @player_party.members.concat @enemy_party
+
+  # get a map of player orders,
+  # return list of events that happened
+  run_turn: (orders) ->
+    console.log "running turn", orders
+
 class L.BattleEntity
   constructor: (@entity) ->
     @entity = @entity.stats
@@ -93,13 +110,14 @@ class L.BattleEntity
   take_hit: (attacker) ->
 
 class L.Party
+  constructor: (members) ->
+    @members = Immutable.List members
+
   to_array: ->
     @members.toArray()
 
   get: (idx) ->
     @members.get idx
 
-  constructor: (members) ->
-    @members = Immutable.List members
 
 

@@ -12,24 +12,18 @@ R.component "Game", {
         new L.Player "Lee"
         new L.Player "Iman"
       ]
-
-      enemy_party: new L.Party [
-        new L.Enemy
-        new L.Enemy
-      ]
-
     }
 
   componentDidMount: ->
     @dispatch {
-      set_view: (e, view) =>
-        @setState view: view
+      set_view: (e, view, view_props) =>
+        @setState view: view, view_props: view_props
     }
 
   render: ->
     div {
       className: "game_frame"
-      children: R[@state.view] @extend_props @state
+      children: R[@state.view] @extend_props @state, @state.view_props
     }
 }
 
@@ -48,7 +42,19 @@ R.component "MainMenu", {
         e.stopPropagation()
         switch val
           when "Battle"
-            @trigger "set_view", "Battle"
+            console.warn "Creating new battle"
+
+            enemies = new L.Party [
+              new L.Enemy
+              new L.Enemy
+            ]
+
+            battle = new L.Battle @props.party, enemies
+
+            @trigger "set_view", "Battle", {
+              battle: battle
+              enemy_party: enemies
+            }
     }
 
   render: ->

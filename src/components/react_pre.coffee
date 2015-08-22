@@ -52,8 +52,8 @@ R.component = (name, data) ->
     R.dispatch @, arguments...
     undefined
 
-  data.extend_props = (more_props) ->
-    $.extend {}, @props, more_props
+  data.extend_props = (more...) ->
+    $.extend {}, @props, more...
 
   data.displayName = "R.#{name}"
   cl = React.createClass(data)
