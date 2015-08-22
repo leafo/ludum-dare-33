@@ -223,10 +223,13 @@ R.component "BattleParty", {
       player = battle_player.entity
       battle_stats = battle_player.battle_stats
 
-      classes = if @phase("enter_commands") && @props.current_player == i
-        "acitve"
-      else
-        ""
+      classes = _.compact([
+        if @phase("enter_commands") && @props.current_player == i
+          "choosing_order"
+
+        if battle_player.is_dead()
+          "dead"
+      ]).join " "
 
       div className: "frame #{classes}", children: [
         if orders = @props.orders.get(i)

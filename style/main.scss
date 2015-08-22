@@ -144,9 +144,12 @@ body {
             flex-grow: 1;
             position: relative;
 
-
-            &.acitve {
+            &.choosing_order {
                 top: -5px;
+            }
+
+            &.dead {
+                @include prefixed(filter, grayscale(100%));
             }
 
             .current_order {
