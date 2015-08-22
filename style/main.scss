@@ -38,6 +38,7 @@ body {
 
 .game_frame {
     @include border_box;
+    @include unselectable;
     width: 420px;
     height: 262px;
     box-shadow: 0 0 0 2px #222;

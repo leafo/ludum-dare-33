@@ -6,15 +6,46 @@ R.component "Battle", {
 
   getInitialState: ->
     {
-      state: "enter_commands"
+      phase: "enter_commands"
       current_player: 0
+      orders: Immutable.Map {}
+    }
+
+  componentDidMount: ->
+    @dispatch {
+      undo_orders: (e, menu) =>
+        next_player = @state.current_player - 1
+        if next_player >= 0
+          @setState {
+            current_player: next_player
+          }
+        else
+          @setState command_erroring: true
+          $(menu).one "animationend", =>
+            @setState command_erroring: false
+
+      set_orders: (e, order) =>
+        next_player = @state.current_player + 1
+
+        phase = if next_player >= @props.party.players.size
+          "executing"
+        else
+          @state.phase
+
+        @setState {
+          phase: phase
+          orders: @state.orders.set @state.current_player, order
+          current_player: next_player
+        }
+
     }
 
   render: ->
     div {
       className: "battle_widget"
       children: [
-        R.BattleParty @extend_props @state
+        R.BattleParty @extend_props @state, { ref: "battle_party" }
+        div className: "frame", "Phase: #{@state.phase}"
       ]
     }
 }
@@ -35,24 +66,33 @@ R.component "BattleParty", {
 
   componentDidMount: ->
     @dispatch {
+      cancel: (e) =>
+        @trigger "undo_orders", e.target
+
       choose: (e, opt) =>
-        # @trigger "set_orders"
-        console.log "chose", opt
+        @trigger "set_orders", opt
     }
 
   render_battle_menu: ->
-    return unless @props.state == "enter_commands"
+    return unless @props.phase == "enter_commands"
     current = @props.party.players.get(@props.current_player)
 
-    R.ChoiceDialog choices: [
-      ["Attack", "attack"]
-      ["Magic", "skill"]
-      ["Defend", "defend"]
-    ]
+    R.ChoiceDialog {
+      ref: "command_menu"
+
+      classes: if @props.command_erroring
+        ["animated shake"]
+
+      choices: [
+        ["Attack", "attack"]
+        ["Magic", "skill"]
+        ["Defend", "defend"]
+      ]
+    }
 
   render_party: ->
     frames = for player, i in @props.party.players.toArray()
-      classes = if @props.state == "enter_commands" && @props.current_player == i
+      classes = if @props.phase == "enter_commands" && @props.current_player == i
         "acitve"
       else
         ""

@@ -41,9 +41,7 @@ R.key_input = (tbl) ->
       }
 
   unbind = l.register_many listeners
-
-  ->
-    l.unregister_many unbind
+  -> l.unregister_many unbind
 
 R.component = (name, data) ->
   data.trigger = ->
