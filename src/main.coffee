@@ -4,5 +4,5 @@ L.start = ->
 
 R.component "Game", {
   render: ->
-    div {}, "Hello from react"
+    div { className: "game_frame" }, "Hello from react"
 }

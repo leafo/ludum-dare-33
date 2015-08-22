@@ -1,0 +1,56 @@
+@mixin unselectable {
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+@mixin default_font {
+    font-family: terminus, sans-serif;
+    font-size: 14px;
+}
+
+@mixin border_box {
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+}
+
+@mixin transition($args...) {
+    -webkit-transition: $args;
+    -moz-transition: $args;
+    -ms-transition: $args;
+    transition: $args;
+}
+
+@mixin prefixed($prop, $args...) {
+    -webkit-#{$prop}: $args;
+    -moz-#{$prop}: $args;
+    -ms-#{$prop}: $args;
+    #{$prop}: $args;
+}
+
+@mixin quotes {
+    &:before {
+        content: "“";
+        font-weight: normal;
+        color: $body_color_lighter;
+    }
+
+    &:after {
+        content: "”";
+        font-weight: normal;
+        color: $body_color_lighter;
+    }
+}
+
+
+@mixin grad($top, $bottom, $solid: true) {
+    @if ($solid) {
+        background-color: mix($top, $bottom);
+    }
+
+    background-image: linear-gradient(bottom, $bottom 0%, $top 100%);
+    background-image: -webkit-linear-gradient(bottom, $bottom 0%, $top 100%);
+    background-image: -moz-linear-gradient(bottom, $bottom 0%, $top 100%);
+    background-image: -o-linear-gradient(bottom, $bottom 0%, $top 100%);
+    background-image: -ms-linear-gradient(bottom, $bottom 0%, $top 100%);
+}

@@ -1,9 +1,44 @@
+@import "common";
+
+@font-face {
+    font-family: "terminus";
+    src: url("fonts/terminus/TerminusTTF-4.39.ttf");
+}
+
+@font-face {
+    font-family: "terminus";
+    font-weight: bold;
+    src: url("fonts/terminus/TerminusTTF-Bold-4.39.ttf");
+}
 
 body {
     margin: 0;
     padding: 0;
     background: #333;
     color: white;
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+
+    @include default_font;
+}
+
+.game_frame {
+    @include border_box;
+    width: 420px;
+    height: 262px;
+    box-shadow: 0 0 0 2px #222;
+    border-radius: 2px;
+    margin: auto auto;
+
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+
+.dialog_widget {
 }
 
 
