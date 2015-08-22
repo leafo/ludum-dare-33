@@ -11,6 +11,12 @@ R.component "Battle", {
       orders: Immutable.Map {}
     }
 
+  componentDidUpdate: (prev_props, prev_state) ->
+    if @state.phase == "executing" && prev_state.phase != "executing"
+      setTimeout =>
+        @setState @getInitialState()
+      , 1000
+
   componentDidMount: ->
     @dispatch {
       undo_orders: (e, menu) =>
@@ -93,7 +99,11 @@ R.component "BattleParty", {
     party: React.PropTypes.any.isRequired
   }
 
-  getInitialState: -> {}
+  getInitialState: ->
+    {
+      menu_stack: Immutable.List ["action"]
+      order_stack: Immutable.List []
+    }
 
   render: ->
     div {
@@ -104,48 +114,72 @@ R.component "BattleParty", {
       ]
     }
 
+  reset_menu: ->
+    @setState @getInitialState()
+
   componentDidMount: ->
     @dispatch {
       cancel: (e) =>
-        if @state.choose_enemy
-          @setState choose_enemy: false
-          return
-
-        @trigger "undo_orders", e.target
+        if @state.menu_stack.size > 1
+          @setState {
+            menu_stack: @state.menu_stack.pop()
+            order_stack: @state.order_stack.pop()
+          }
+        else
+          @trigger "undo_orders", e.target
 
       choose: (e, opt) =>
-        switch opt
-          when "attack"
-            @setState current_order: opt, choose_enemy: true
-          else
-            @trigger "set_orders", opt
+        top = @state.menu_stack.last()
+        orders = @state.order_stack.push opt
+
+        switch top
+          when "action"
+            switch opt
+              when "attack"
+                @setState {
+                  menu_stack: @state.menu_stack.push "enemies"
+                  order_stack: orders
+                }
+                return
+
+        # fall through, send the orders
+        @trigger "set_orders", orders
+        @reset_menu()
+
     }
 
   render_battle_menu: ->
     return unless @props.phase == "enter_commands"
     current = @props.party.players.get(@props.current_player)
 
-    div className: "dialog_stack", children: [
-      R.ChoiceDialog {
-        inactive: @state.choose_enemy
-        classes: if @props.command_erroring
-          ["animated shake"]
+    menus = for menu, i in @state.menu_stack.toArray()
+      top = i == @state.menu_stack.size - 1
 
-        choices: [
-          ["Attack", "attack"]
-          ["Magic", "skill"]
-          ["Defend", "defend"]
-        ]
-      }
+      switch menu
+        when "action"
+          R.ChoiceDialog {
+            inactive: !top
+            classes: if @props.command_erroring
+              ["animated shake"]
 
-      if @state.choose_enemy
-        R.ChoiceDialog {
-          classes: ["enemy_dialog"]
-          choices: for e, id in @props.enemy_party.to_array()
-            [e.name, id]
-        }
+            choices: [
+              ["Attack", "attack"]
+              ["Magic", "skill"]
+              ["Defend", "defend"]
+            ]
+          }
 
-    ]
+        when "enemies"
+          R.ChoiceDialog {
+            inactive: !top
+            choices: for e, id in @props.enemy_party.to_array()
+              [e.name, id]
+          }
+
+        else
+          throw "unknown menu in stack: #{menu}"
+
+    div className: "dialog_stack", children: menus
 
   phase: (name) ->
     name == @props.phase
