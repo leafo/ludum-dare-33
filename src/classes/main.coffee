@@ -111,6 +111,8 @@ class L.Party
   living_members: ->
     @members.filter((e) -> !e.is_dead()).toArray()
 
+  random_member: ->
+
   get: (idx) ->
     @members.get idx
 

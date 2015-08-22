@@ -16,9 +16,7 @@ class L.Battle
     @player_party.members.every (e) -> e.is_dead()
 
   all_entities: ->
-    tuples = @player_party.members.map (e, idx) -> [e, idx]
-    tuples = tuples.concat @enemy_party.members.map (e, idx) -> [e, idx]
-    tuples.toArray()
+    @player_party.members.concat @enemy_party.members
 
   # finds battle entity
   find_target: ([type, idx]) ->
@@ -31,9 +29,7 @@ class L.Battle
         throw "unknown target type: #{type}"
 
     t = party.get idx
-    console.log "Checking target", t.entity.name, t.is_dead(), t.battle_stats.get("hp")
-
-    if t.is_dead()
+    if !t || t.is_dead()
       t = party.living_members()[0]
 
     t
@@ -41,29 +37,42 @@ class L.Battle
   # get a map of player orders,
   # returns mutable array of callbacks :o
   run_turn: (orders) ->
-    actions = for [battle_entity, idx] in @all_entities()
-      do (battle_entity, idx) =>
-        entity = battle_entity.entity
-        if entity instanceof L.Player
-          order = orders[idx]
-          switch order[0]
-            when "attack"
-              =>
-                target = @find_target order[1]
-                if target
-                  target.take_hit battle_entity
-            else
-              throw "don't know how to handle order #{order[0]}"
+    # enemy_orders = @enemy_party.members.map (enemy) ->
+    #   ["attack"]
 
-        else if entity instanceof L.Enemy
-          null
+    enemy_orders = {}
+
+    actions = for battle_entity in @all_entities().toArray()
+      entity = battle_entity.entity
+
+      order = if entity instanceof L.Player
+        orders[battle_entity.id]
+      else if entity instanceof L.Enemy
+        enemy_orders[battle_entity.id]
+      else
+        throw "unknown battle entity for turn"
+
+      @turn_event battle_entity, order
 
     Immutable.List _.compact actions
+
+  turn_event: (battle_entity, order) ->
+    return unless order
+
+    switch order[0]
+      when "attack"
+        =>
+          target = @find_target order[1]
+          if target
+            target.take_hit battle_entity
+      else
+        throw "don't know how to handle order #{order[0]}"
+
 
 class L.BattleEntity
   constructor: (@id, @entity) ->
     @battle_stats = @entity.stats
-  
+
   is_dead: =>
     @battle_stats.get("hp") <= 0
 
