@@ -53,10 +53,17 @@ R.component "Battle", {
     next_event = events.first()
     if next_event
       next_event()
-      @setState events: events.shift()
-      setTimeout =>
-        @run_event()
-      , 300
+      if @props.battle.is_over()
+        @setState {
+          phase: "finished"
+          orders: Immutable.Map {}
+          events: null
+        }
+      else
+        @setState events: events.shift()
+        setTimeout =>
+          @run_event()
+        , 300
     else
       # all done, reset
       @setState @getInitialState()

@@ -45,8 +45,8 @@ R.component "MainMenu", {
             console.warn "Creating new battle"
 
             enemies = new L.Party [
-              new L.Enemy
-              new L.Enemy
+              new L.Enemy "Rags 1"
+              new L.Enemy "Rags 2"
             ]
 
             battle = new L.Battle @props.party, enemies

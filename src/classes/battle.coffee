@@ -6,6 +6,15 @@ class L.Battle
     @enemy_party = new L.Party enemy_party.members.map (e, i) ->
       new L.BattleEntity i, e
 
+  is_over: =>
+    @player_wins() || @enemy_wins()
+
+  player_wins: ->
+    @enemy_party.members.every (e) -> e.is_dead()
+
+  enemy_wins: ->
+    @player_party.members.every (e) -> e.is_dead()
+
   all_entities: ->
     tuples = @player_party.members.map (e, idx) -> [e, idx]
     tuples = tuples.concat @enemy_party.members.map (e, idx) -> [e, idx]
@@ -21,12 +30,17 @@ class L.Battle
       else
         throw "unknown target type: #{type}"
 
-    party.get idx
+    t = party.get idx
+    console.log "Checking target", t.entity.name, t.is_dead(), t.battle_stats.get("hp")
+
+    if t.is_dead()
+      t = party.living_members()[0]
+
+    t
 
   # get a map of player orders,
   # returns mutable array of callbacks :o
   run_turn: (orders) ->
-    console.log "running turn", orders
     actions = for [battle_entity, idx] in @all_entities()
       do (battle_entity, idx) =>
         entity = battle_entity.entity
@@ -34,9 +48,10 @@ class L.Battle
           order = orders[idx]
           switch order[0]
             when "attack"
-              target = @find_target order[1]
-              if target
-                => target.take_hit battle_entity
+              =>
+                target = @find_target order[1]
+                if target
+                  target.take_hit battle_entity
             else
               throw "don't know how to handle order #{order[0]}"
 
@@ -50,11 +65,11 @@ class L.BattleEntity
     @battle_stats = @entity.stats
   
   is_dead: =>
-    @battle_stats.get("hp") == 0
+    @battle_stats.get("hp") <= 0
 
   take_hit: (attacker) ->
     console.debug "#{@entity.name} being hit by #{attacker.entity.name}"
     @battle_stats = @battle_stats.merge {
-      hp: Math.max 0, @battle_stats.get("hp") - 8
+      hp: Math.max 0, @battle_stats.get("hp") - 12
     }
 
