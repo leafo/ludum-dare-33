@@ -32,7 +32,7 @@ class L.Battle
 
     t = party.get idx
     if !t || t.is_dead()
-      t = party.living_members()[0]
+      t = party.living_members().first()
 
     t
 

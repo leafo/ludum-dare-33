@@ -109,7 +109,7 @@ class L.Party
     @members.toArray()
 
   living_members: ->
-    @members.filter((e) -> !e.is_dead()).toArray()
+    @members.filter (e) -> !e.is_dead()
 
   random_member: ->
 

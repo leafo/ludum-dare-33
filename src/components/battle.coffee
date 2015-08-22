@@ -5,9 +5,11 @@ R.component "Battle", {
   }
 
   getInitialState: ->
+    first_member = @props.battle.player_party.living_members().first()
+
     {
       phase: "enter_commands"
-      current_player: 0
+      current_player: null
       orders: Immutable.Map {}
       events: null
     }
@@ -198,16 +200,20 @@ R.component "BattleParty", {
           }
 
         when "enemies"
+          enemies = @props.battle.enemy_party.living_members().toArray()
+
           R.ChoiceDialog {
             inactive: !top
-            choices: for e in @props.battle.enemy_party.living_members()
+            choices: for e in enemies
               [e.entity.name, ["enemy", e.id]]
           }
 
         when "players"
+          players = @props.battle.player_party.to_array()
+
           R.ChoiceDialog {
             inactive: !top
-            choices: for e in @props.battle.player_party.to_array()
+            choices: for e in players
               [e.entity.name, ["player", e.id]]
           }
         else
