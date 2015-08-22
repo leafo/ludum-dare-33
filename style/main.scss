@@ -60,6 +60,20 @@ body {
     @include dialog_frame;
 }
 
+
+.dialog_stack {
+    position: relative;
+    display: inline-block;
+    white-space: nowrap;
+
+    > :not(:first-child) {
+        position: absolute;
+        left: 50%;
+        bottom: 50%;
+    }
+}
+
+
 .choice_dialog_widget {
     @include dialog_frame;
     display: inline-block;
@@ -154,7 +168,7 @@ body {
         bottom: 50px;
         left: 0;
         right: 0;
-        background: green;
+        background: rgba(green, 0.2);
         display: flex;
         align-items: center;
         justify-content: center;

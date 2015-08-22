@@ -93,6 +93,9 @@ class L.BattleEntity
   take_hit: (attacker) ->
 
 class L.Party
+  to_array: ->
+    @players.toArray()
+
   constructor: (players) ->
     @players = Immutable.List players
 
