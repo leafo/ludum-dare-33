@@ -58,6 +58,7 @@ R.component "Battle", {
     if next_event
       next_event()
       if @props.battle.is_over()
+        @props.battle.end_battle()
         @setState {
           phase: "finished"
           orders: Immutable.Map {}
@@ -77,9 +78,16 @@ R.component "Battle", {
       className: "battle_widget"
       children: [
         div className: "battle_interface", children: [
-          R.BattleEnemyList @extend_props @state
-          R.BattleParty @extend_props @state
-          div className: "frame debug_frame", "Phase: #{@state.phase}"
+          switch @state.phase
+            when "finished"
+              R.BattleVictory @extend_props @state
+            else
+              [
+                R.BattleEnemyList @extend_props @state
+                R.BattleParty @extend_props @state
+                div className: "frame debug_frame",
+                  "Phase: #{@state.phase}"
+              ]
         ]
 
         R.BattleField @extend_props @state
@@ -254,6 +262,35 @@ R.component "BattleParty", {
       ]
 
     div className: "player_frames", children: frames
+
+}
+
+R.component "BattleVictory", {
+  componentDidMount: ->
+    @unbind_keys = R.key_input {
+      confirm: =>
+        @trigger "set_view", "MainMenu", {}
+    }
+
+  componentWillUnmount: ->
+    @unbind_keys()
+
+  render: ->
+    div className: "battle_victory_widget", children: [
+      @render_player_party()
+    ]
+
+  render_player_party: ->
+    player_frames = for bp in @props.battle.player_party.to_array()
+      player = bp.entity
+
+      div className: "frame", children: [
+        div {}, player.name
+        div {}, "HP: #{player.stats.get("hp")} MP: #{player.stats.get("mp")}"
+        div {}, "EXP: #{player.level.get "exp"} NEXT: #{player.level.get "next_exp"}"
+      ]
+
+    div className: "player_party", children: player_frames
 
 }
 

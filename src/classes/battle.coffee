@@ -18,6 +18,16 @@ class L.Battle
   all_entities: ->
     @player_party.members.concat @enemy_party.members
 
+  # copy the hp/mp back into the player's main stats
+  end_battle: ->
+    for battle_player in @player_party.members.toArray()
+      player = battle_player.entity
+
+      player.stats = player.stats.merge {
+        hp: battle_player.battle_stats.get("hp")
+        mp: battle_player.battle_stats.get("mp")
+      }
+
   # finds battle entity
   find_target: ([type, idx]) ->
     # TODO: use random member if no idx
