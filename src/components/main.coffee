@@ -56,7 +56,15 @@ R.component "ProgressBar", {
 
 R.component "ChoiceDialog", {
   getInitialState: ->
-    { selected_choice: 0 }
+    {
+      selected_choice: 0
+    }
+
+  getDefaultProps: ->
+    {
+      active: true
+      focus: true
+    }
 
   move_up: ->
     selected = @state.selected_choice - 1
@@ -98,21 +106,21 @@ R.component "ChoiceDialog", {
     delete @_unbind_keys
 
   componentDidUpdate: (prev_props) ->
-    if @props.inactive && !prev_props.inactive
+    if prev_props.active && !@props.active
       @unbind_keys()
 
-    if !@props.inactive && prev_props.inactive
+    if !prev_props.active && @props.active
       @bind_keys()
 
   componentDidMount: ->
-    @bind_keys() unless @props.inactive
+    @bind_keys() if @props.active
 
   componentWillUnmount: ->
     @unbind_keys()
 
   render: ->
     classes = _.compact(@props.classes).join " "
-    if @props.inactive
+    unless @props.active
       classes += " inactive"
 
     div {

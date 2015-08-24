@@ -198,7 +198,7 @@ R.component "BattleParty", {
       switch menu
         when "action"
           R.ChoiceDialog {
-            inactive: !top
+            active: top
             classes: if @props.command_erroring
               ["animated shake"]
 
@@ -213,7 +213,7 @@ R.component "BattleParty", {
           enemies = @props.battle.enemy_party.living_members().toArray()
 
           R.ChoiceDialog {
-            inactive: !top
+            active: top
             choices: for e in enemies
               [e.entity.name, ["enemy", e.id]]
           }
@@ -222,7 +222,7 @@ R.component "BattleParty", {
           players = @props.battle.player_party.to_array()
 
           R.ChoiceDialog {
-            inactive: !top
+            active: top
             choices: for e in players
               [e.entity.name, ["player", e.id]]
           }

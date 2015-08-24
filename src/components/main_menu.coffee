@@ -88,7 +88,7 @@ R.component "MainMenu", {
         switch menu
           when "main"
             R.ChoiceDialog {
-              inactive: !top
+              active: top
               classes: [
                 "main_menu"
                 if @state.erroring
@@ -105,7 +105,7 @@ R.component "MainMenu", {
 
           when "choose_player"
             R.ChoiceDialog {
-              inactive: !top
+              active: top
               classes: ["player_menu"]
               choices: for player, id in @props.game.party.to_array()
                 [player.name, id]
