@@ -79,7 +79,10 @@ class L.Battle
 
     enemy_orders = Immutable.Map(enemy_orders).toJS()
 
+    defenders = []
+
     actions = for battle_entity in @all_entities().toArray()
+      battle_entity.defending = false
       entity = battle_entity.entity
       continue if entity.is_dead()
 
@@ -90,7 +93,17 @@ class L.Battle
       else
         throw "unknown battle entity for turn"
 
+
+      if order && order[0] == "defend"
+        defenders.push battle_entity
+
       @turn_event battle_entity, order
+
+    if defenders.length
+      actions.unshift =>
+        for be in defenders
+          console.debug "#{be.entity.name} defends"
+          be.defending = true
 
     Immutable.List _.compact actions
 
@@ -103,6 +116,9 @@ class L.Battle
           target = @find_target order[1]
           if target
             target.take_hit battle_entity
+      when "defend"
+        # noop
+        null
       else
         throw "don't know how to handle order #{order[0]}"
 
@@ -116,7 +132,12 @@ class L.BattleEntity
 
   take_hit: (attacker) ->
     console.debug "#{@entity.name} being hit by #{attacker.entity.name}"
+    damage =  12
+
+    if @defending
+      damage = Math.floor damage / 2
+
     @battle_stats = @battle_stats.merge {
-      hp: Math.max 0, @battle_stats.get("hp") - 12
+      hp: Math.max 0, @battle_stats.get("hp") - damage
     }
 
