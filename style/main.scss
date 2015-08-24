@@ -422,3 +422,22 @@ body {
         }
     }
 }
+
+.joint_menu_widget {
+    margin: 10px;
+    display: flex;
+    align-items: flex-start;
+
+    .choice_dialog_widget {
+        margin: 0;
+        margin-right: 10px;
+
+        &.focused {
+            box-shadow: 0 0 0 2px $red;
+        }
+
+        &:last-child {
+            margin-right: 0;
+        }
+    }
+}

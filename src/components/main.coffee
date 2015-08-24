@@ -6,8 +6,11 @@ R.component "Game", {
   getInitialState: ->
     game = new L.Game
 
+    [view, view_props] = L.Game.default_view()
+
     {
-      view: "MainMenu"
+      view: view
+      view_props: view_props
       game: game
       party: game.party
     }
@@ -54,6 +57,56 @@ R.component "ProgressBar", {
     },
 }
 
+R.component "JointChoiceDialog", {
+  getInitialState: -> { current_menu: 0 }
+  getDefaultProps: -> { active: true }
+
+  componentDidMount: ->
+    @bind_keys()
+
+  componentWillUnmount: ->
+    @unbind_keys()
+
+  ignore_input: ->
+    !@props.active
+
+  move_left: ->
+    return if @ignore_input()
+    next_menu = @state.current_menu - 1
+    if next_menu < 0
+      next_menu = @props.menus.length - 1
+
+    @setState {
+      current_menu: next_menu
+    }
+
+  move_right: ->
+    return if @ignore_input()
+    @setState {
+      current_menu: (@state.current_menu + 1) % @props.menus.length
+    }
+
+  bind_keys: ->
+    if @_unbind_keys
+      throw "keys already bound"
+
+    @_unbind_keys = R.key_input {
+      left: @move_left
+      right: @move_right
+    }
+
+  unbind_keys: ->
+    @_unbind_keys?()
+    delete @_unbind_keys
+
+  render: ->
+    div className: "joint_menu_widget", children: for menu, i in @props.menus
+      R.ChoiceDialog @extend_props menu, {
+        focus: @state.current_menu == i
+      }
+
+}
+
 R.component "ChoiceDialog", {
   getInitialState: ->
     {
@@ -67,6 +120,7 @@ R.component "ChoiceDialog", {
     }
 
   move_up: ->
+    return if @ignore_input()
     selected = @state.selected_choice - 1
 
     if selected < 0
@@ -75,21 +129,21 @@ R.component "ChoiceDialog", {
     @setState selected_choice: selected
 
   move_down: ->
+    return if @ignore_input()
     @setState {
       selected_choice: (@state.selected_choice + 1) % @props.choices.length
     }
 
   bind_keys: ->
-    if @_unbind_keys
-      throw "keys already bound"
-
-    @_unbind_keys = R.key_input {
+    @unbind_keys = R.key_input {
       up: @move_up
       down: @move_down
       cancel: =>
+        return if @ignore_input()
         @trigger "cancel"
 
       confirm: =>
+        return if @ignore_input()
         selected = @props.choices[@state.selected_choice]
 
         value = if selected instanceof Array
@@ -98,30 +152,24 @@ R.component "ChoiceDialog", {
           selected
 
         @trigger "choose", value
-
     }
 
-  unbind_keys: ->
-    @_unbind_keys?()
-    delete @_unbind_keys
-
-  componentDidUpdate: (prev_props) ->
-    if prev_props.active && !@props.active
-      @unbind_keys()
-
-    if !prev_props.active && @props.active
-      @bind_keys()
+  ignore_input: ->
+    !@props.active || !@props.focus
 
   componentDidMount: ->
-    @bind_keys() if @props.active
+    @bind_keys()
 
   componentWillUnmount: ->
-    @unbind_keys()
+    @unbind_keys?()
 
   render: ->
     classes = _.compact(@props.classes).join " "
     unless @props.active
       classes += " inactive"
+
+    if @props.focus
+      classes += " focused"
 
     div {
       className: "choice_dialog_widget frame #{classes}"
@@ -135,7 +183,7 @@ R.component "ChoiceDialog", {
       else
         choice
 
-      cls = if i == @state.selected_choice
+      cls = if @props.focus && i == @state.selected_choice
         "selected"
       else
         ""
