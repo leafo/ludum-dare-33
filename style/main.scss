@@ -129,37 +129,38 @@ body {
         padding-left: 5px;
         padding-right: 5px;
 
-        .player_frames {
-            display: flex;
-            flex-wrap: no-wrap;
-        }
 
         position: absolute;
         bottom: 0;
         left: 0;
         right: 0;
 
-        .frame {
-            margin-left: 5px;
-            margin-right: 5px;
-            flex-grow: 1;
-            position: relative;
+        .player_frames {
+            display: flex;
+            flex-wrap: no-wrap;
 
-            &.choosing_order {
-                top: -5px;
-            }
+            .frame {
+                margin-left: 5px;
+                margin-right: 5px;
+                flex-grow: 1;
+                position: relative;
 
-            &.dead {
-                @include prefixed(filter, grayscale(100%));
-            }
+                &.choosing_order {
+                    top: -5px;
+                }
 
-            .current_order {
-                position: absolute;
-                top: 0;
-                right: 0;
-                font-size: 12px;
-                background: #A365D2;
-                padding: 2px 4px;
+                &.dead {
+                    @include prefixed(filter, grayscale(100%));
+                }
+
+                .current_order {
+                    position: absolute;
+                    top: 0;
+                    right: 0;
+                    font-size: 12px;
+                    background: #A365D2;
+                    padding: 2px 4px;
+                }
             }
         }
     }
