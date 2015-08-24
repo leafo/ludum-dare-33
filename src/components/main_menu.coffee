@@ -145,7 +145,7 @@ R.component "PlayerStatusRow", {
 
       div className: "bar_column",
         R.ProgressBar {
-          label: "HP: #{s.numberFormat hp}/#{s.numberFormat max_mp}"
+          label: "HP: #{s.numberFormat hp}/#{s.numberFormat max_hp}"
           classes: ["hp_bar"]
           p: hp/max_hp
         }

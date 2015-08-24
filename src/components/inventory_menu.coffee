@@ -17,6 +17,9 @@ R.component "InventoryMenu", {
 
         if target.is ".player_menu"
           console.log "give to #{val.name}"
+          @state.highlighted_item.use null, val
+          @setState menu_stack: @getInitialState().menu_stack
+          return
 
         if target.is ".inventory_menu"
           # no items, go home
@@ -26,6 +29,8 @@ R.component "InventoryMenu", {
 
           if val.is_consumable()
             @setState menu_stack: @state.menu_stack.push "choose_player"
+
+          return
 
       cancel: =>
         if @state.menu_stack.size == 1

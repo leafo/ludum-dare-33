@@ -51,7 +51,7 @@ class L.Entity
 
   constructor: ->
     @stats = L.Stats {
-      hp: 20
+      hp: 10
       mp: 10
 
       max_hp: 20
