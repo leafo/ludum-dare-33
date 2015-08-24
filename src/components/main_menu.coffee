@@ -46,8 +46,14 @@ R.component "MainMenu", {
     }
 
   render: ->
+    message = switch @state.menu_stack.last()
+      when "choose_player"
+        "Choose a team member"
+      else
+        "What do you want to do?"
+
     div className: "main_menu_widget", children: [
-      div className: "info_bar", R.RevealText text: "What do you want to do?"
+      div className: "info_bar", R.RevealText text: message
       div className: "menu_columns", children: [
         div className: "options_column", children: [
           @render_menus()

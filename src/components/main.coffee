@@ -149,8 +149,21 @@ R.component "RevealText", {
   getInitialState: ->
     { visible_characters: 1 }
 
+  componentWillReceiveProps: (next_props) ->
+    console.log "reveal get props #{@props.text} -> #{next_props.text}"
+
+    if next_props.text != @props.text
+      @set_timer()
+
   componentDidMount: ->
+    @set_timer()
+
+  set_timer: ->
+    if @state.timer
+      window.clearInterval @state.timer
+
     @setState {
+      visible_characters: 1
       timer: setInterval =>
         if @state.visible_characters >= @props.text.length
           window.clearInterval @state.timer
