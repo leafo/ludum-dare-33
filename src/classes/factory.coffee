@@ -9,11 +9,11 @@ L.Factory = {
   level: (l) ->
     L.Factory.leveled_player(l).level
 
-  battle: (level, party) ->
+  battle: (level, game) ->
     enemies = new L.Party [
       new L.Enemy "Rags 1"
       new L.Enemy "Rags 2"
     ]
 
-    new L.Battle party, enemies
+    new L.Battle game, enemies
 }

@@ -21,7 +21,7 @@ L.Level = (status={}) ->
 
 
 class L.Game
-  money: 1000
+  money: 0
 
   constructor: ->
     @party = @default_party()

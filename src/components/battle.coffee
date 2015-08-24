@@ -266,20 +266,34 @@ R.component "BattleParty", {
 }
 
 R.component "BattleVictory", {
+  getInitialState: ->
+    { show_menu: false }
+
   componentDidMount: ->
     @dispatch {
       choose: =>
         @trigger "set_view", "MainMenu", {}
     }
 
+    setTimeout =>
+      @setState show_menu: true
+    , 200
+
   render: ->
+    loot = @props.battle.loot()
+
     div className: "battle_victory_widget", children: [
       div className: "victory_columns", children: [
         div className: "summary_column", children: [
           div className: "frame", children: [
-            div {}, "Victory"
-            div {}, "EXP: #{0}"
-            div {}, "GOLT: #{0}"
+            div children: [
+              if @props.battle.player_wins()
+                "Victory"
+              else
+                "Defeat"
+            ]
+            div {}, "EXP: #{s.numberFormat loot.get "exp"}"
+            div {}, "GOLT: #{s.numberFormat loot.get "money"}"
           ]
 
           # div className: "frame", children: [
@@ -287,11 +301,12 @@ R.component "BattleVictory", {
           #   div {}, "Gold Butt"
           # ]
 
-          R.ChoiceDialog {
-            choices: [
-              "Continue"
-            ]
-          }
+          if @state.show_menu
+            R.ChoiceDialog {
+              choices: [
+                "Continue"
+              ]
+            }
         ]
         div className: "player_column",
           div className: "player_party", children: for bp in @props.battle.player_party.to_array()
@@ -320,7 +335,7 @@ R.component "BattleVictory", {
       ]
 
       R.ProgressBar {
-        label: "EXP: #{exp}/#{max_exp}"
+        label: "EXP: #{s.numberFormat exp}/#{s.numberFormat max_exp}"
         p: exp/max_exp
         classes: ["exp_bar"]
       }

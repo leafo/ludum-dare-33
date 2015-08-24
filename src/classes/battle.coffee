@@ -1,6 +1,6 @@
 class L.Battle
-  constructor: (player_party, enemy_party) ->
-    @player_party = new L.Party player_party.members.map (e, i) ->
+  constructor: (@game, enemy_party) ->
+    @player_party = new L.Party @game.party.members.map (e, i) ->
       new L.BattleEntity i, e
 
     @enemy_party = new L.Party enemy_party.members.map (e, i) ->
@@ -18,9 +18,18 @@ class L.Battle
   all_entities: ->
     @player_party.members.concat @enemy_party.members
 
+  loot: ->
+    Immutable.Map {
+      money: 100
+      exp: 24
+      items: Immutable.List()
+    }
+
   # copy the hp/mp back into the player's main stats
   # give exp
   end_battle: ->
+    loot = @loot()
+
     for battle_player in @player_party.members.toArray()
       player = battle_player.entity
 
@@ -30,7 +39,9 @@ class L.Battle
       }
 
       unless player.is_dead()
-        player.give_exp 24
+        player.give_exp loot.get "exp"
+
+    @game.money += loot.get("money")
 
   # finds battle entity
   find_target: ([type, idx]) ->

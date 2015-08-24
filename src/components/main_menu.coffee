@@ -21,7 +21,7 @@ R.component "MainMenu", {
           when "battle"
             console.warn "Creating new battle"
             @trigger "set_view", "Battle", {
-              battle: L.Factory.battle 1, @props.party
+              battle: L.Factory.battle 1, @props.game
             }
     }
 
@@ -44,7 +44,7 @@ R.component "MainMenu", {
 
           div className: "frame", children: [
             div {}, "GOLT:"
-            div {}, "10000"
+            div {}, s.numberFormat @props.game.money
           ]
         ]
 
@@ -70,17 +70,17 @@ R.component "PlayerStatusRow", {
         div {}, player.name
         div {},
           span className: "player_level", "Lv. #{player.level.get("level")}"
-        "Next: #{player.level.get("next_exp")  - player.level.get("exp")}"
+        "Next: #{s.numberFormat player.level.get("next_exp")  - player.level.get("exp")}"
 
       div className: "bar_column",
         R.ProgressBar {
-          label: "HP: #{hp}/#{max_mp}"
+          label: "HP: #{s.numberFormat hp}/#{s.numberFormat max_mp}"
           classes: ["hp_bar"]
           p: hp/max_hp
         }
 
         R.ProgressBar {
-          label: "MP: #{mp}/#{max_mp}"
+          label: "MP: #{s.numberFormat mp}/#{s.numberFormat max_mp}"
           classes: ["mp_bar"]
           p: mp/max_mp
         }
