@@ -5,6 +5,7 @@ L.start = ->
 R.component "Game", {
   getInitialState: ->
     game = new L.Game
+    window.game = game
 
     [view, view_props] = L.Game.default_view()
 

@@ -16,7 +16,6 @@ R.component "InventoryMenu", {
         target = $(e.target)
 
         if target.is ".player_menu"
-          console.log "give to #{val.name}"
           @state.highlighted_item.use null, val
           @setState menu_stack: @getInitialState().menu_stack
           return
@@ -49,7 +48,7 @@ R.component "InventoryMenu", {
     }
 
   render_items: ->
-    all_items = @props.game.inventory.items.toArray()
+    all_items = @props.game.inventory.stacked_items().toArray()
     message = @state.highlighted_item?.description || "An item"
 
     menus = for menu, i in @state.menu_stack.toArray()
@@ -59,8 +58,16 @@ R.component "InventoryMenu", {
           R.ChoiceDialog {
             active: top
             classes: ["inventory_menu"]
-            choices: for item in all_items
-              [item.name, item]
+            choices: for item_stack in all_items
+              item = item_stack.first()
+              [
+                [
+                  item.name
+                  span { className: "item_quantity" },
+                    "x#{s.numberFormat item_stack.size}"
+                ]
+                item
+              ]
           }
 
         when "choose_player"

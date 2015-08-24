@@ -15,6 +15,12 @@ class L.Inventory
   consumables: ->
     @items.filter (item) -> item.is_consumable()
 
+  quantity: (item) ->
+    @items.count (i) -> i.constructor == item.constructor
+
+  stacked_items: (items=@items) ->
+    items.groupBy((item) -> item.constructor).toList()
+
 class L.Item
   is_equipment: ->
     @ instanceof L.Equipment

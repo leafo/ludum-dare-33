@@ -470,4 +470,10 @@ body {
         display: block;
         margin: 10px;
     }
+
+    .inventory_menu {
+        .item_quantity {
+            float: right;
+        }
+    }
 }
