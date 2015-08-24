@@ -150,8 +150,6 @@ R.component "RevealText", {
     { visible_characters: 1 }
 
   componentWillReceiveProps: (next_props) ->
-    console.log "reveal get props #{@props.text} -> #{next_props.text}"
-
     if next_props.text != @props.text
       @set_timer()
 

@@ -7,6 +7,7 @@ L.Stats = (stats={}) ->
     max_mp: 0
     str: 0
     def: 0
+    agi: 0
     mag: 0
     mdef: 0
   }).merge stats
@@ -21,6 +22,8 @@ L.Level = (status={}) ->
 
 
 class L.Game
+  @default_view: -> ["MainMenu", {}]
+
   money: 0
 
   constructor: ->
@@ -53,6 +56,7 @@ class L.Entity
 
       str: 1
       def: 1
+      agi: 1
       mag: 1
       mdef: 1
     }
@@ -81,6 +85,7 @@ class L.Player extends L.Entity
       max_mp: 2.2
       str: 1.4
       def: 1.8
+      agi: 0.9
       mag: 0.6
       mdef: 0.8
     }

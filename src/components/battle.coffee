@@ -272,7 +272,7 @@ R.component "BattleVictory", {
   componentDidMount: ->
     @dispatch {
       choose: =>
-        @trigger "set_view", "MainMenu", {}
+        @trigger "set_view", L.Game.default_view()...
     }
 
     setTimeout =>
