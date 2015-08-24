@@ -13,7 +13,7 @@ R.component "MainMenu", {
       choose: (e, val) =>
         e.stopPropagation()
         switch val
-          when "Battle"
+          when "battle"
             console.warn "Creating new battle"
 
             enemies = new L.Party [
@@ -29,9 +29,6 @@ R.component "MainMenu", {
             }
     }
 
-  render_player_status: (player) ->
-
-
   render: ->
     div className: "main_menu_widget", children: [
       div className: "info_bar", "What do you want to do?"
@@ -44,8 +41,7 @@ R.component "MainMenu", {
             ]
 
             choices: [
-              "Battle"
-              "Nothing"
+              ["Battle", "battle"]
             ]
           }
 
@@ -53,12 +49,11 @@ R.component "MainMenu", {
             div {}, "Golt:"
             div {}, "10000"
           ]
-
         ]
 
-        div className: "player_party",
-          content: (R.PlayerStatus { player: p } for p in @props.party.to_array())
-        ]
+        div className: "player_party", children: for p in @props.party.to_array()
+          R.PlayerStatus { player: p }
+      ]
     ]
 }
 
