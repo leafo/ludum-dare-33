@@ -7,7 +7,7 @@ class L.Battle
       new L.BattleEntity i, e
 
   is_over: =>
-    @player_wins() || @enemy_wins()
+    @escaped || @player_wins() || @enemy_wins()
 
   player_wins: ->
     @enemy_party.members.every (e) -> e.is_dead()
@@ -19,11 +19,21 @@ class L.Battle
     @player_party.members.concat @enemy_party.members
 
   loot: ->
-    Immutable.Map {
-      money: 100
-      exp: 24
-      items: Immutable.List()
-    }
+    if @escaped
+      Immutable.Map {
+        money: 0
+        exp: 0
+        items: Immutable.List()
+      }
+    else
+      Immutable.Map {
+        money: 100
+        exp: 24
+        items: Immutable.List()
+      }
+
+  escape: =>
+    @escaped = true
 
   # copy the hp/mp back into the player's main stats
   # give exp

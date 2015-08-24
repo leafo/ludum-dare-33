@@ -46,6 +46,11 @@ R.component "Battle", {
           }
           return
 
+        if order.first() == "escape"
+          @props.battle.escape()
+          @end_battle()
+          return
+
         next_player = party.next_living_member @state.current_player
         orders = @state.orders.set @state.current_player, order
 
@@ -62,18 +67,21 @@ R.component "Battle", {
 
     }
 
+  end_battle: ->
+    @props.battle.end_battle()
+    @setState {
+      phase: "finished"
+      orders: Immutable.Map {}
+      events: null
+    }
+
   run_event: (events) ->
     events ||= @state.events
     next_event = events.first()
     if next_event
       next_event()
       if @props.battle.is_over()
-        @props.battle.end_battle()
-        @setState {
-          phase: "finished"
-          orders: Immutable.Map {}
-          events: null
-        }
+        @end_battle()
       else
         @setState events: events.shift()
         setTimeout =>
@@ -196,7 +204,7 @@ R.component "BattleParty", {
 
         # fall through, send the orders
         @trigger "set_orders", orders
-        @reset_menu()
+        @reset_menu() if @isMounted()
 
     }
 
@@ -327,7 +335,9 @@ R.component "BattleVictory", {
         div className: "summary_column", children: [
           div className: "frame", children: [
             div children: [
-              if @props.battle.player_wins()
+              if @props.battle.escaped
+                "Escaped"
+              else if @props.battle.player_wins()
                 "Victory"
               else
                 "Defeat"
