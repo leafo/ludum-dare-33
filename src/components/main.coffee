@@ -30,8 +30,11 @@ R.component "Game", {
 R.component "ProgressBar", {
   render: ->
     classes = _.compact(@props.classes).join " "
+
     if @props.label?
       classes += " has_label"
+
+    p = Math.min 1, Math.max 0, @props.p
 
     div {
       className: "progress_bar_widget #{classes}"
@@ -41,10 +44,11 @@ R.component "ProgressBar", {
           div className: "progress_bar_label", @props.label
 
         div className: "progress_bar_track",
-          div className: "progress_bar_inner", style: {
-            backgroundColor: @props.bg_color
-            width: "#{Math.round @props.p * 100}%"
-          }
+          if p > 0
+            div className: "progress_bar_inner", style: {
+              backgroundColor: @props.bg_color
+              width: "#{Math.round p * 100}%"
+            }
       ]
     },
 }

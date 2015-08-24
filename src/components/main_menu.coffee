@@ -67,6 +67,12 @@ R.component "PlayerStatus", {
   render: ->
     player = @props.player
 
+    hp = player.stats.get "hp"
+    max_hp = player.stats.get "max_hp"
+
+    mp = player.stats.get "mp"
+    max_mp = player.stats.get "max_mp"
+
     div className: "player_status_widget frame", children: [
       div className: "primary_column",
         div {}, player.name
@@ -76,15 +82,15 @@ R.component "PlayerStatus", {
 
       div className: "bar_column",
         R.ProgressBar {
-          label: "HP: #{player.stats.get("hp")}/#{player.stats.get("max_hp")}"
+          label: "HP: #{hp}/#{max_mp}"
           classes: ["hp_bar"]
-          p: 0.5
+          p: hp/max_hp
         }
 
         R.ProgressBar {
-          label: "MP: #{player.stats.get("mp")}/#{player.stats.get("max_mp")}"
+          label: "MP: #{mp}/#{max_mp}"
           classes: ["mp_bar"]
-          p: 0.5
+          p: mp/max_mp
         }
     ]
 }
