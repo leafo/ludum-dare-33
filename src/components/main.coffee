@@ -175,7 +175,7 @@ R.component "ChoiceDialog", {
   componentDidMount: ->
     @bind_keys()
     setTimeout =>
-      @highlight_choice()
+      @highlight_choice() if @isMounted()
 
   componentWillUnmount: ->
     @unbind_keys?()

@@ -183,28 +183,28 @@ R.component "BattleParty", {
         top = @state.menu_stack.last()
         orders = @state.order_stack.push opt
 
-        push_menu = (menu) =>
-          @setState {
-            menu_stack: @state.menu_stack.push menu
-            order_stack: orders
-          }
-
-        switch top
+        sub_menu = switch top
           when "action"
             switch opt
               when "macro"
-                push_menu "macro"
-                return
+                "macro"
               when "attack"
-                push_menu "enemies"
-                return
+                "enemies"
+              when "item"
+                "items"
               when "skill"
-                push_menu "players"
-                return
+                "players"
+          when "items"
+            "players"
 
-        # fall through, send the orders
-        @trigger "set_orders", orders
-        @reset_menu() if @isMounted()
+        if sub_menu
+          @setState {
+            menu_stack: @state.menu_stack.push sub_menu
+            order_stack: orders
+          }
+        else
+          @trigger "set_orders", orders
+          @reset_menu() if @isMounted()
 
     }
 
@@ -234,6 +234,7 @@ R.component "BattleParty", {
                 choices: [
                   ["Attack", "attack"]
                   ["Magic", "skill"]
+                  ["Item", "item"]
                   ["Defend", "defend"]
                 ]
               }
@@ -274,6 +275,14 @@ R.component "BattleParty", {
             choices: for e in players
               [e.entity.name, ["player", e.id]]
           }
+
+        when "items"
+          items = @props.game.inventory.consumables()
+          R.ChoiceDialog {
+            active: top
+            choices: for item, i in items.toArray()
+              [item.name, [i, item]]
+          }
         else
           throw "unknown menu in stack: #{menu}"
 
@@ -302,6 +311,7 @@ R.component "BattleParty", {
             attack: "ATK"
             defend: "DEF"
             skill: "SKL"
+            item: "ITM"
           })[orders[0]]
 
         div {}, "#{player.name}"
