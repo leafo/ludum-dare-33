@@ -408,8 +408,10 @@ body {
 }
 
 .status_menu_widget {
-    display: flex;
-    padding: 10px;
+    .status_menu_columns {
+        display: flex;
+        padding: 10px;
+    }
 
     .status_column {
         flex: 1;

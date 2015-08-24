@@ -22,44 +22,47 @@ R.component "StatusMenu", {
     max_mp = player.stats.get "max_mp"
 
     div className: "status_menu_widget", children: [
-      div className: "options_column",
-        R.ChoiceDialog {
-          choices: [
-            "Return"
+      div className: "info_bar", R.RevealText text: "Party status"
+      div className: "status_menu_columns", children: [
+        div className: "options_column",
+          R.ChoiceDialog {
+            choices: [
+              "Return"
+            ]
+          }
+
+        div className: "status_column", children: [
+          div className: "frame", children: [
+            div children: [
+              @props.player.name
+              span className: "player_level", "Lv. #{player.level.get("level")}"
+            ]
+
+            R.ProgressBar {
+              label: "HP: #{s.numberFormat hp}/#{s.numberFormat max_hp}"
+              p: hp/max_hp
+              classes: ["hp_bar"]
+            }
+
+            R.ProgressBar {
+              label: "MP: #{s.numberFormat mp}/#{s.numberFormat max_mp}"
+              p: hp/max_hp
+              classes: ["mp_bar"]
+            }
+
+            R.ProgressBar {
+              label: "EXP: #{s.numberFormat exp}/#{s.numberFormat max_exp}"
+              p: exp/max_exp
+              classes: ["exp_bar"]
+            }
+
+            table className: "stat_table", tbody {
+              children: for stat in ["str", "def", "agi", "mag", "mdef"]
+                tr {},
+                  (td {}, stat.toUpperCase() + ": "),
+                  (td {}, s.numberFormat player.stats.get stat)
+            }
           ]
-        }
-
-      div className: "status_column", children: [
-        div className: "frame", children: [
-          div children: [
-            @props.player.name
-            span className: "player_level", "Lv. #{player.level.get("level")}"
-          ]
-
-          R.ProgressBar {
-            label: "HP: #{s.numberFormat hp}/#{s.numberFormat max_hp}"
-            p: hp/max_hp
-            classes: ["hp_bar"]
-          }
-
-          R.ProgressBar {
-            label: "MP: #{s.numberFormat mp}/#{s.numberFormat max_mp}"
-            p: hp/max_hp
-            classes: ["mp_bar"]
-          }
-
-          R.ProgressBar {
-            label: "EXP: #{s.numberFormat exp}/#{s.numberFormat max_exp}"
-            p: exp/max_exp
-            classes: ["exp_bar"]
-          }
-
-          table className: "stat_table", tbody {
-            children: for stat in ["str", "def", "agi", "mag", "mdef"]
-              tr {},
-                (td {}, stat.toUpperCase() + ": "),
-                (td {}, s.numberFormat player.stats.get stat)
-          }
         ]
       ]
     ]
