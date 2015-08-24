@@ -23,7 +23,14 @@ R.component "MainMenu", {
         e.stopPropagation()
         target = $(e.target)
         if target.is ".player_menu"
-          console.log "do something with player #{val}"
+          command = @state.command_stack.first()
+          switch command
+            when "status"
+              @trigger "set_view", "StatusMenu", {
+                player: @props.game.party.get val
+              }
+            else
+              throw "Unknow command #{command}"
 
         if target.is ".main_menu"
           switch val

@@ -28,6 +28,14 @@ $red: #F13A2B;
     box-shadow: 0 2px 0 rgba(black, 0.1), inset 0 2px 1px rgba(black, 0.1);
 }
 
+@mixin text_bubble {
+    background: rgba(black, 0.2);
+    display: inline-block;
+    border-radius: 4px;
+    padding: 0 4px;
+    margin: 1px 0;
+}
+
 body {
     margin: 0;
     padding: 0;
@@ -328,11 +336,7 @@ body {
     }
 
     .player_level {
-        background: rgba(black, 0.2);
-        display: inline-block;
-        border-radius: 4px;
-        padding: 0 4px;
-        margin: 1px 0;
+        @include text_bubble;
     }
 }
 
@@ -373,15 +377,48 @@ body {
     }
 
     .player_level, .player_status {
-        background: rgba(black, 0.2);
-        display: inline-block;
-        vertical-align: 0;
-        border-radius: 4px;
-        padding: 0 4px;
+        @include text_bubble;
         margin-left: 5px;
     }
 
     .choice_dialog_widget {
         display: block;
+    }
+}
+
+.status_menu_widget {
+    display: flex;
+    padding: 10px;
+
+    .status_column {
+        flex: 1;
+
+        table {
+            border-spacing: 0;
+        }
+
+        .frame {
+            margin: 0;
+            margin-bottom: 10px;
+        }
+
+        .progress_bar_widget {
+            margin: 5px 0;
+        }
+
+        .player_level {
+            @include text_bubble;
+            margin-left: 5px;
+        }
+    }
+
+    .options_column {
+        width: 100px;
+        margin-right: 10px;
+
+        .choice_dialog_widget {
+            margin: 0;
+            display: block;
+        }
     }
 }

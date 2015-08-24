@@ -62,5 +62,5 @@ R.component = (name, data) ->
 
 {
   div, span, a, p, ol, ul, li, strong, em, img, form, label, input, textarea,
-  button, h1, h2, h3, h4, h5, h6
+  button, h1, h2, h3, h4, h5, h6, table, tbody, thead, tr, td
 } = React.DOM
