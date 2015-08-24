@@ -6,6 +6,9 @@ class L.Inventory
   give: (item) ->
     @items = @items.push item
 
+  remove: (item) ->
+    @items = @items.filterNot (i) -> i == item
+
   equipment: ->
     @items.filter (item) -> item.is_equipment()
 

@@ -30,6 +30,7 @@ class L.Game
     @inventory = new L.Inventory()
 
     @inventory.give new L.Consumable()
+    @inventory.give new L.Consumable()
     @inventory.give new L.Equipment()
 
   heal_party: ->
