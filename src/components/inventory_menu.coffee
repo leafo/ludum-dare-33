@@ -3,6 +3,7 @@ R.component "InventoryMenu", {
     {
       menu_stack: Immutable.List ["inventory"]
       highlighted_item: null
+      current_item: null
     }
 
   componentDidMount: ->
@@ -16,8 +17,11 @@ R.component "InventoryMenu", {
         target = $(e.target)
 
         if target.is ".player_menu"
-          @state.highlighted_item.use null, val
-          @setState menu_stack: @getInitialState().menu_stack
+          @state.current_item.use null, val
+          @setState {
+            menu_stack: @getInitialState().menu_stack
+            current_item: null
+          }
           return
 
         if target.is ".inventory_menu"
@@ -27,7 +31,10 @@ R.component "InventoryMenu", {
             return
 
           if val.is_consumable()
-            @setState menu_stack: @state.menu_stack.push "choose_player"
+            @setState {
+              current_item: val
+              menu_stack: @state.menu_stack.push "choose_player"
+            }
 
           return
 
@@ -48,21 +55,22 @@ R.component "InventoryMenu", {
     }
 
   render_items: ->
-    all_items = @props.game.inventory.stacked_items().toArray()
     message = @state.highlighted_item?.description || "An item"
 
     menus = for menu, i in @state.menu_stack.toArray()
       top = i == @state.menu_stack.size - 1
       switch menu
         when "inventory"
+          stacks = @props.game.inventory.stacked_items().toArray()
+
           R.ChoiceDialog {
             active: top
             classes: ["inventory_menu"]
-            choices: for item_stack in all_items
+            choices: for item_stack in stacks
               item = item_stack.first()
               [
                 [
-                  item.name
+                  "#{item.name}"
                   span { className: "item_quantity" },
                     "x#{s.numberFormat item_stack.size}"
                 ]

@@ -27,7 +27,7 @@ class L.Game
 
   constructor: ->
     @party = @default_party()
-    @inventory = new L.Inventory()
+    @inventory = new L.Inventory @
 
     @inventory.give new L.Consumable()
     @inventory.give new L.Consumable()

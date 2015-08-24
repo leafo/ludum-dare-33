@@ -208,7 +208,7 @@ R.component "ChoiceDialog", {
 
       div className: "choice #{cls}", children: [
         div className: "selector"
-        span className: "choice_label", label
+        span className: "choice_label", children: label
       ]
 }
 

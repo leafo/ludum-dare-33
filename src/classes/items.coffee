@@ -1,13 +1,19 @@
 
 class L.Inventory
-  constructor: ->
+  constructor: (@game) ->
     @items = Immutable.List()
 
   give: (item) ->
+    throw "item already has inventory" if item.inventory?
+    item.inventory = @
     @items = @items.push item
 
   remove: (item) ->
-    @items = @items.filterNot (i) -> i == item
+    before = @items.size
+    @items = @items.filterNot (i) ->
+      if i == item
+        delete i.inventory
+        true
 
   equipment: ->
     @items.filter (item) -> item.is_equipment()
@@ -22,6 +28,8 @@ class L.Inventory
     items.groupBy((item) -> item.constructor).toList()
 
 class L.Item
+  @id: 0
+
   is_equipment: ->
     @ instanceof L.Equipment
 
@@ -31,6 +39,8 @@ class L.Item
   constructor: (name) ->
     @name = name if name?
     @stats = Immutable.Map()
+    @id = @constructor.id
+    @constructor.id += 1
 
 class L.Equipment extends L.Item
   @slots: ["head", "arm", "body", "pant"]
@@ -50,6 +60,7 @@ class L.Consumable extends L.Item
     }
 
   use: (user, target) ->
+    console.warn "using", @
     target.stats = target.stats.merge @stats.map (val, name) ->
       val = target.stats.get(name) + val
       val = Math.max 0, val
@@ -57,4 +68,9 @@ class L.Consumable extends L.Item
         val = Math.min max, val
 
       val
+
+    if @inventory
+      @inventory.remove @
+    else
+      console.warn "used an item that's not in an inventory"
 
