@@ -20,17 +20,8 @@ R.component "MainMenu", {
 
           when "battle"
             console.warn "Creating new battle"
-
-            enemies = new L.Party [
-              new L.Enemy "Rags 1"
-              new L.Enemy "Rags 2"
-            ]
-
-            battle = new L.Battle @props.party, enemies
-
             @trigger "set_view", "Battle", {
-              battle: battle
-              enemy_party: enemies
+              battle: L.Factory.battle 1, @props.party
             }
     }
 
@@ -52,19 +43,19 @@ R.component "MainMenu", {
           }
 
           div className: "frame", children: [
-            div {}, "Golt:"
+            div {}, "GOLT:"
             div {}, "10000"
           ]
         ]
 
         div className: "player_party", children: for p in @props.party.to_array()
-          R.PlayerStatus { player: p }
+          R.PlayerStatusRow { player: p }
       ]
     ]
 }
 
 
-R.component "PlayerStatus", {
+R.component "PlayerStatusRow", {
   render: ->
     player = @props.player
 
@@ -74,7 +65,7 @@ R.component "PlayerStatus", {
     mp = player.stats.get "mp"
     max_mp = player.stats.get "max_mp"
 
-    div className: "player_status_widget frame", children: [
+    div className: "player_status_row_widget frame", children: [
       div className: "primary_column",
         div {}, player.name
         div {},

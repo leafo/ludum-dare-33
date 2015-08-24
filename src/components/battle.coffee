@@ -267,30 +267,63 @@ R.component "BattleParty", {
 
 R.component "BattleVictory", {
   componentDidMount: ->
-    @unbind_keys = R.key_input {
-      confirm: =>
+    @dispatch {
+      choose: =>
         @trigger "set_view", "MainMenu", {}
     }
 
-  componentWillUnmount: ->
-    @unbind_keys()
-
   render: ->
     div className: "battle_victory_widget", children: [
-      @render_player_party()
+      div className: "victory_columns", children: [
+        div className: "summary_column", children: [
+          div className: "frame", children: [
+            div {}, "Victory"
+            div {}, "EXP: #{0}"
+            div {}, "GOLT: #{0}"
+          ]
+
+          # div className: "frame", children: [
+          #   div {}, "Found:"
+          #   div {}, "Gold Butt"
+          # ]
+
+          R.ChoiceDialog {
+            choices: [
+              "Continue"
+            ]
+          }
+        ]
+        div className: "player_column",
+          div className: "player_party", children: for bp in @props.battle.player_party.to_array()
+            @render_player_row bp
+      ]
     ]
 
-  render_player_party: ->
-    player_frames = for bp in @props.battle.player_party.to_array()
-      player = bp.entity
+  render_player_row: (bp) ->
+    player = bp.entity
+    exp = player.level.get "exp"
+    max_exp = player.level.get "next_exp"
 
-      div className: "frame", children: [
-        div {}, player.name
-        div {}, "HP: #{player.stats.get("hp")} MP: #{player.stats.get("mp")}"
-        div {}, "EXP: #{player.level.get "exp"} NEXT: #{player.level.get "next_exp"}"
+    classes = _.compact([
+      if player.is_dead()
+        "is_dead"
+    ]).join " "
+
+    div className: "frame player_row #{classes}", children: [
+      div className: "name_row", children: [
+        player.name
+        span className: "player_level",
+          "Lv. #{player.level.get("level")}"
+
+        if player.is_dead()
+          span className: "player_status", "DEAD"
       ]
 
-    div className: "player_party", children: player_frames
-
+      R.ProgressBar {
+        label: "EXP: #{exp}/#{max_exp}"
+        p: exp/max_exp
+        classes: ["exp_bar"]
+      }
+    ]
 }
 

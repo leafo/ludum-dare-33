@@ -19,6 +19,7 @@ class L.Battle
     @player_party.members.concat @enemy_party.members
 
   # copy the hp/mp back into the player's main stats
+  # give exp
   end_battle: ->
     for battle_player in @player_party.members.toArray()
       player = battle_player.entity
@@ -27,6 +28,9 @@ class L.Battle
         hp: battle_player.battle_stats.get("hp")
         mp: battle_player.battle_stats.get("mp")
       }
+
+      unless player.is_dead()
+        player.give_exp 24
 
   # finds battle entity
   find_target: ([type, idx]) ->

@@ -199,7 +199,7 @@ body {
     padding-right: 5px;
 
     .progress_bar_track {
-        background: black;
+        background: #333;
         height: 5px;
         box-shadow: inset 0 -3px 3px -3px rgba(black, 0.4);
         transform: skewX(-45deg);
@@ -209,6 +209,7 @@ body {
         height: 5px;
         background: white;
         border-radius: 1px 0 0 1px;
+        box-shadow: 0 0 0 1px #48505A;
     }
 
     .progress_bar_label {
@@ -216,12 +217,22 @@ body {
         bottom: 0;
         z-index: 1;
         left: 10px;
-        @include outline_text(#444);
         @include outline_text(#48505A);
     }
 
     &.has_label {
         padding-top: 9px;
+    }
+
+    &.exp_bar {
+        .progress_bar_track {
+            background: #3E4C42;
+        }
+
+        .progress_bar_inner {
+            background: #B1E4A0;
+            box-shadow: 0 0 0 1px #E6FBDF;
+        }
     }
 
     &.hp_bar {
@@ -286,7 +297,7 @@ body {
     }
 }
 
-.player_status_widget {
+.player_status_row_widget {
     display: flex;
     align-items: center;
 
@@ -319,5 +330,49 @@ body {
 .reveal_text_widget {
     .hidden_characters {
         visibility: hidden;
+    }
+}
+
+.battle_victory_widget {
+    .victory_columns {
+        padding: 10px;
+        display: flex;
+
+        .frame {
+            margin: 0;
+            margin-bottom: 10px;
+        }
+
+        .summary_column {
+            width: 100px;
+            margin-right: 10px;
+        }
+
+        .player_column {
+            flex: 1;
+        }
+    }
+
+    .name_row {
+        margin-bottom: 5px;
+    }
+
+    .player_row {
+        &.is_dead {
+            @include prefixed(filter, grayscale(100%));
+        }
+    }
+
+    .player_level, .player_status {
+        background: rgba(black, 0.2);
+        display: inline-block;
+        vertical-align: 0;
+        border-radius: 4px;
+        padding: 0 4px;
+        margin-left: 5px;
+    }
+
+    .choice_dialog_widget {
+        display: block;
     }
 }
