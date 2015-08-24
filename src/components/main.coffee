@@ -27,49 +27,26 @@ R.component "Game", {
     }
 }
 
-R.component "MainMenu", {
-  getInitialState: -> {}
-
-  componentDidMount: ->
-    @dispatch {
-      cancel: =>
-        return if @state.erroring
-        @setState erroring: true
-        $(@getDOMNode()).one "animationend", =>
-          @setState erroring: false
-
-      choose: (e, val) =>
-        e.stopPropagation()
-        switch val
-          when "Battle"
-            console.warn "Creating new battle"
-
-            enemies = new L.Party [
-              new L.Enemy "Rags 1"
-              new L.Enemy "Rags 2"
-            ]
-
-            battle = new L.Battle @props.party, enemies
-
-            @trigger "set_view", "Battle", {
-              battle: battle
-              enemy_party: enemies
-            }
-    }
-
+R.component "ProgressBar", {
   render: ->
-    div className: "main_menu_widget", children: [
-      div className: "dialog_widget", "What do you want to do?"
-      R.ChoiceDialog {
-        classes: if @state.erroring
-          ["animated shake"]
+    classes = _.compact(@props.classes).join " "
+    if @props.label?
+      classes += " has_label"
 
-        choices: [
-          "Battle"
-          "Nothing"
-        ]
-      }
-    ]
+    div {
+      className: "progress_bar_widget #{classes}"
+      style: { backgroundColor: @props.bg_color }
+      children: [
+        if @props.label
+          div className: "progress_bar_label", @props.label
+
+        div className: "progress_bar_track",
+          div className: "progress_bar_inner", style: {
+            backgroundColor: @props.bg_color
+            width: "#{Math.round @props.p * 100}%"
+          }
+      ]
+    },
 }
 
 R.component "ChoiceDialog", {
@@ -134,7 +111,7 @@ R.component "ChoiceDialog", {
       classes += " inactive"
 
     div {
-      className: "choice_dialog_widget #{classes}"
+      className: "choice_dialog_widget frame #{classes}"
       children: @render_choices()
     }
 

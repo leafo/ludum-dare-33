@@ -8,6 +8,10 @@ $red: #F13A2B;
     src: url("fonts/terminus/TerminusTTF-4.39.ttf");
 }
 
+@mixin outline_text($color) {
+    text-shadow: -1px -1px 0 $color, 1px 1px 0 $color, -1px 1px 0 $color, 1px -1px 0 $color, 1px 0px 0 $color, -1px 0px 0 $color, 0px 1px 0 $color, 0px -1px 0 $color;
+}
+
 @font-face {
     font-family: "terminus";
     font-weight: bold;
@@ -56,10 +60,9 @@ body {
     transform: scale(2,2);
 }
 
-.frame, .dialog_widget {
+.frame {
     @include dialog_frame;
 }
-
 
 .dialog_stack {
     position: relative;
@@ -73,9 +76,7 @@ body {
     }
 }
 
-
 .choice_dialog_widget {
-    @include dialog_frame;
     display: inline-block;
     margin-top: 0;
 
@@ -192,3 +193,125 @@ body {
     }
 }
 
+.progress_bar_widget {
+    position: relative;
+    padding-left: 5px;
+    padding-right: 5px;
+
+    .progress_bar_track {
+        background: black;
+        height: 5px;
+        box-shadow: inset 0 -3px 3px -3px rgba(black, 0.4);
+        transform: skewX(-45deg);
+    }
+
+    .progress_bar_inner {
+        height: 5px;
+        background: white;
+        border-radius: 1px 0 0 1px;
+    }
+
+    .progress_bar_label {
+        position: absolute;
+        bottom: 0;
+        z-index: 1;
+        left: 10px;
+        @include outline_text(#444);
+        @include outline_text(#48505A);
+    }
+
+    &.has_label {
+        padding-top: 9px;
+    }
+
+    &.hp_bar {
+        .progress_bar_track {
+            background: #463333;
+        }
+
+        .progress_bar_inner {
+            @include grad(#FF6A6A, darken(#FF6A6A, 5%));
+            box-shadow: 0 0 0 1px #FFE7E7;
+        }
+    }
+
+    &.mp_bar {
+        .progress_bar_track {
+            background: #3C3B52;
+        }
+
+        .progress_bar_inner {
+            @include grad(#9EE8FD, darken(#9EE8FD, 5%));
+            box-shadow: 0 0 0 1px rgb(234, 253, 255)
+        }
+    }
+}
+
+.main_menu_widget {
+    .info_bar {
+        background: rgba(black, 0.4);
+        padding: 5px 10px;
+    }
+
+    .player_level {
+        background: rgba(black, 0.2);
+        display: inline-block;
+        border-radius: 4px;
+        padding: 0 4px;
+        margin: 1px 0;
+    }
+
+    .player_status {
+        display: flex;
+        align-items: center;
+
+        > :nth-child(1) {
+            flex: 1;
+        }
+
+        > :nth-child(2) {
+            flex: 2;
+        }
+
+        .bar_column {
+            .progress_bar_widget {
+                margin-bottom: 5px;
+                &:last-child {
+                    margin-bottom: 0;
+                }
+            }
+        }
+    }
+
+    .menu_columns {
+        margin: 10px;
+        margin-bottom: 0;
+
+        display: flex;
+        align-items: flex-start;
+
+        .frame {
+            margin: 0;
+            margin-bottom: 10px;
+        }
+
+        > .frame {
+            margin-right: 10px;
+            &:last-child {
+                margin-right: 0;
+            }
+        }
+
+        .player_party {
+            flex: 1;
+        }
+    }
+
+    .options_column {
+        margin-right: 10px;
+
+        .choice_dialog_widget {
+            display: block;
+        }
+    }
+}
