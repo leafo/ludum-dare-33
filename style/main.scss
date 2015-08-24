@@ -48,6 +48,7 @@ body {
     @include default_font;
 }
 
+
 .game_frame {
     @include border_box;
     @include unselectable;
@@ -70,6 +71,11 @@ body {
 
 .frame {
     @include dialog_frame;
+}
+
+.info_bar {
+    background: rgba(black, 0.4);
+    padding: 5px 10px;
 }
 
 .dialog_stack {
@@ -285,11 +291,6 @@ body {
 }
 
 .main_menu_widget {
-    .info_bar {
-        background: rgba(black, 0.4);
-        padding: 5px 10px;
-    }
-
     .menu_columns {
         margin: 10px;
         margin-bottom: 0;
@@ -444,5 +445,12 @@ body {
         &:last-child {
             margin-right: 0;
         }
+    }
+}
+
+.inventory_menu_widget {
+    .choice_dialog_widget {
+        display: block;
+        margin: 10px;
     }
 }

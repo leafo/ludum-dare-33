@@ -22,6 +22,7 @@ R.component "MainMenu", {
       choose: (e, val) =>
         e.stopPropagation()
         target = $(e.target)
+
         if target.is ".player_menu"
           command = @state.command_stack.first()
           switch command
@@ -33,24 +34,32 @@ R.component "MainMenu", {
               throw "Unknow command #{command}"
 
         if target.is ".main_menu"
-          switch val
-            when "status"
-              console.warn "Status party"
-              @setState {
-                command_stack: @state.command_stack.push "status"
-                menu_stack: @state.menu_stack.push "choose_player"
-              }
-
-            when "heal"
-              console.warn "Healing party"
-              @props.game.heal_party()
-              @trigger "refresh"
-            when "battle"
-              console.warn "Creating new battle"
-              @trigger "set_view", "Battle", {
-                battle: L.Factory.battle 1, @props.game
-              }
+          @dispatch_main_menu val
+          return
     }
+
+  dispatch_main_menu: (item) ->
+    switch item
+      when "inventory"
+        @trigger "set_view", "InventoryMenu", {}
+      when "status"
+        console.warn "Status party"
+        @setState {
+          command_stack: @state.command_stack.push "status"
+          menu_stack: @state.menu_stack.push "choose_player"
+        }
+
+      when "heal"
+        console.warn "Healing party"
+        @props.game.heal_party()
+        @trigger "refresh"
+      when "battle"
+        console.warn "Creating new battle"
+        @trigger "set_view", "Battle", {
+          battle: L.Factory.battle 1, @props.game
+        }
+      else
+        throw "menu not supported: #{item}"
 
   render: ->
     message = switch @state.menu_stack.last()
@@ -99,6 +108,8 @@ R.component "MainMenu", {
                 unless @props.game.party.is_dead()
                   ["Battle", "battle"]
                 ["Heal", "heal"]
+                ["Item", "inventory"]
+                ["Equip", "equip"]
                 ["Status", "status"]
               ]
             }

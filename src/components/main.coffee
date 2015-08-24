@@ -126,6 +126,18 @@ R.component "ChoiceDialog", {
       focus: true
     }
 
+  highlight_choice: ->
+    return if @ignore_input()
+    @trigger "highlight_choice", @selected_choice_value()
+
+  selected_choice_value: ->
+    selected = @props.choices[@state.selected_choice]
+
+    if selected instanceof Array
+      selected[1]
+    else
+      selected
+
   move_up: ->
     return if @ignore_input()
     selected = @state.selected_choice - 1
@@ -134,12 +146,14 @@ R.component "ChoiceDialog", {
       selected = @props.choices.length - 1
 
     @setState selected_choice: selected
+    @highlight_choice()
 
   move_down: ->
     return if @ignore_input()
     @setState {
       selected_choice: (@state.selected_choice + 1) % @props.choices.length
     }
+    @highlight_choice()
 
   bind_keys: ->
     @unbind_keys = R.key_input {
@@ -151,13 +165,7 @@ R.component "ChoiceDialog", {
 
       confirm: =>
         return if @ignore_input()
-        selected = @props.choices[@state.selected_choice]
-
-        value = if selected instanceof Array
-          selected[1]
-        else
-          selected
-
+        value = @selected_choice_value()
         @trigger "choose", value
     }
 
@@ -166,6 +174,8 @@ R.component "ChoiceDialog", {
 
   componentDidMount: ->
     @bind_keys()
+    setTimeout =>
+      @highlight_choice()
 
   componentWillUnmount: ->
     @unbind_keys?()

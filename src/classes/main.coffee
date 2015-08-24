@@ -20,7 +20,6 @@ L.Level = (status={}) ->
     level: 1
   })
 
-
 class L.Game
   @default_view: -> ["MainMenu", {}]
 
@@ -28,6 +27,10 @@ class L.Game
 
   constructor: ->
     @party = @default_party()
+    @inventory = new L.Inventory()
+    @inventory.give new L.Consumable()
+    @inventory.give new L.Equipment()
+
 
   heal_party: ->
     for player in @party.to_array()
