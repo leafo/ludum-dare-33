@@ -28,9 +28,9 @@ class L.Game
   constructor: ->
     @party = @default_party()
     @inventory = new L.Inventory()
+
     @inventory.give new L.Consumable()
     @inventory.give new L.Equipment()
-
 
   heal_party: ->
     for player in @party.to_array()
@@ -66,6 +66,20 @@ class L.Entity
 
   is_dead: =>
     @stats.get("hp") == 0
+
+  summary_string: ->
+    hp = @stats.get "hp"
+    max_hp = @stats.get "max_hp"
+
+    mp = @stats.get "mp"
+    max_mp = @stats.get "max_mp"
+
+    [
+      "HP: #{s.numberFormat hp}/#{s.numberFormat max_hp}"
+      "MP: #{s.numberFormat mp}/#{s.numberFormat max_mp}"
+    ].join " "
+
+
 
 class L.Enemy extends L.Entity
   name: "Ragr"

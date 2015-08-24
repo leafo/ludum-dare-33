@@ -7,14 +7,18 @@ class L.Inventory
     @items = @items.push item
 
   equipment: ->
-    @items.filter (item) ->
-      item instanceof L.Equipment
+    @items.filter (item) -> item.is_equipment()
 
   consumables: ->
-    @items.filter (item) ->
-      item instanceof L.Consumable
+    @items.filter (item) -> item.is_consumable()
 
 class L.Item
+  is_equipment: ->
+    @ instanceof L.Equipment
+
+  is_consumable: ->
+    @ instanceof L.Consumable
+
   constructor: (name) ->
     @name = name if name?
     @stats = Immutable.Map()

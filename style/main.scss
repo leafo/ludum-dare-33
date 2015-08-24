@@ -96,6 +96,17 @@ body {
             left: 20px;
         }
     }
+
+    &.centered {
+        > :not(:first-child) {
+            bottom: auto;
+            left: 50%;
+            top: 50%;
+            margin: 0;
+
+            transform: translate(-50%, -50%);
+        }
+    }
 }
 
 .choice_dialog_widget {
@@ -449,6 +460,10 @@ body {
 }
 
 .inventory_menu_widget {
+    .dialog_stack {
+        display: block;
+    }
+
     .choice_dialog_widget {
         display: block;
         margin: 10px;
