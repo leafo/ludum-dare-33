@@ -13,6 +13,11 @@ R.component "MainMenu", {
       choose: (e, val) =>
         e.stopPropagation()
         switch val
+          when "heal"
+            console.warn "Healing party"
+            @props.game.heal_party()
+            @trigger "refresh"
+
           when "battle"
             console.warn "Creating new battle"
 
@@ -42,6 +47,7 @@ R.component "MainMenu", {
 
             choices: [
               ["Battle", "battle"]
+              ["Heal", "heal"]
             ]
           }
 

@@ -4,20 +4,21 @@ L.start = ->
 
 R.component "Game", {
   getInitialState: ->
+    game = new L.Game
+
     {
       view: "MainMenu"
-
-      party: new L.Party [
-        new L.Player "Sab"
-        new L.Player "Lee"
-        new L.Player "Iman"
-      ]
+      game: game
+      party: game.party
     }
 
   componentDidMount: ->
     @dispatch {
       set_view: (e, view, view_props) =>
         @setState view: view, view_props: view_props
+
+      refresh: =>
+        @forceUpdate()
     }
 
   render: ->

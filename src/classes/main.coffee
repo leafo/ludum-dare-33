@@ -20,6 +20,26 @@ L.Level = (status={}) ->
   })
 
 
+class L.Game
+  money: 1000
+
+  constructor: ->
+    @party = @default_party()
+
+  heal_party: ->
+    for player in @party.to_array()
+      player.stats = player.stats.merge {
+        hp: player.stats.get "max_hp"
+        mp: player.stats.get "max_mp"
+      }
+
+  default_party: ->
+    new L.Party [
+      new L.Player "Sab"
+      new L.Player "Lee"
+      new L.Player "Iman"
+    ]
+
 class L.Entity
   name: "Unkwn"
 
