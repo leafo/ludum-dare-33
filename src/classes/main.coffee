@@ -131,6 +131,9 @@ class L.Party
   living_members: ->
     @members.filter (e) -> !e.is_dead()
 
+  is_dead: ->
+    @members.every (e) -> e.is_dead()
+
   random_member: ->
 
   next_living_member: (idx=-1, direction=1) =>

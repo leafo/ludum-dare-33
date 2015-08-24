@@ -36,8 +36,9 @@ R.component "MainMenu", {
                 "animated shake"
             ]
 
-            choices: [
-              ["Battle", "battle"]
+            choices: _.compact [
+              unless @props.game.party.is_dead()
+                ["Battle", "battle"]
               ["Heal", "heal"]
             ]
           }
@@ -48,8 +49,11 @@ R.component "MainMenu", {
           ]
         ]
 
-        div className: "player_party", children: for p in @props.party.to_array()
-          R.PlayerStatusRow { player: p }
+        div {
+          className: "player_party"
+          children: for p in @props.party.to_array()
+            R.PlayerStatusRow { player: p }
+        }
       ]
     ]
 }
