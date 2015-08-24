@@ -74,6 +74,14 @@ body {
         left: 50%;
         bottom: 50%;
     }
+
+    &.downward {
+        > :not(:first-child) {
+            bottom: auto;
+            top: 10px;
+            left: 20px;
+        }
+    }
 }
 
 .choice_dialog_widget {

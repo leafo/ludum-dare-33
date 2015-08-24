@@ -1,10 +1,19 @@
 
 R.component "MainMenu", {
-  getInitialState: -> {}
+  getInitialState: ->
+    {
+      menu_stack: Immutable.List ["main"]
+      command_stack: Immutable.List()
+    }
 
   componentDidMount: ->
     @dispatch {
       cancel: =>
+        if @state.menu_stack.size > 1
+          return @setState {
+            menu_stack: @state.menu_stack.pop()
+          }
+
         return if @state.erroring
         @setState erroring: true
         $(@getDOMNode()).one "animationend", =>
@@ -12,17 +21,28 @@ R.component "MainMenu", {
 
       choose: (e, val) =>
         e.stopPropagation()
-        switch val
-          when "heal"
-            console.warn "Healing party"
-            @props.game.heal_party()
-            @trigger "refresh"
+        target = $(e.target)
+        if target.is ".player_menu"
+          console.log "do something with player #{val}"
 
-          when "battle"
-            console.warn "Creating new battle"
-            @trigger "set_view", "Battle", {
-              battle: L.Factory.battle 1, @props.game
-            }
+        if target.is ".main_menu"
+          switch val
+            when "status"
+              console.warn "Status party"
+              @setState {
+                command_stack: @state.command_stack.push "status"
+                menu_stack: @state.menu_stack.push "choose_player"
+              }
+
+            when "heal"
+              console.warn "Healing party"
+              @props.game.heal_party()
+              @trigger "refresh"
+            when "battle"
+              console.warn "Creating new battle"
+              @trigger "set_view", "Battle", {
+                battle: L.Factory.battle 1, @props.game
+              }
     }
 
   render: ->
@@ -30,18 +50,7 @@ R.component "MainMenu", {
       div className: "info_bar", R.RevealText text: "What do you want to do?"
       div className: "menu_columns", children: [
         div className: "options_column", children: [
-          R.ChoiceDialog {
-            classes: [
-              if @state.erroring
-                "animated shake"
-            ]
-
-            choices: _.compact [
-              unless @props.game.party.is_dead()
-                ["Battle", "battle"]
-              ["Heal", "heal"]
-            ]
-          }
+          @render_menus()
 
           div className: "frame", children: [
             div {}, "GOLT:"
@@ -56,6 +65,40 @@ R.component "MainMenu", {
         }
       ]
     ]
+
+  render_menus: ->
+    div {
+      className: "dialog_stack downward"
+      children: for menu, i in @state.menu_stack.toArray()
+        top = i == @state.menu_stack.size - 1
+
+        switch menu
+          when "main"
+            R.ChoiceDialog {
+              inactive: !top
+              classes: [
+                "main_menu"
+                if @state.erroring
+                  "animated shake"
+              ]
+
+              choices: _.compact [
+                unless @props.game.party.is_dead()
+                  ["Battle", "battle"]
+                ["Heal", "heal"]
+                ["Status", "status"]
+              ]
+            }
+
+          when "choose_player"
+            R.ChoiceDialog {
+              inactive: !top
+              classes: ["player_menu"]
+              choices: for player, id in @props.game.party.to_array()
+                [player.name, id]
+            }
+    }
+
 }
 
 
