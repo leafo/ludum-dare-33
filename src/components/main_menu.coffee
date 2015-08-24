@@ -31,7 +31,7 @@ R.component "MainMenu", {
 
   render: ->
     div className: "main_menu_widget", children: [
-      div className: "info_bar", "What do you want to do?"
+      div className: "info_bar", R.RevealText text: "What do you want to do?"
       div className: "menu_columns", children: [
         div className: "options_column", children: [
           R.ChoiceDialog {

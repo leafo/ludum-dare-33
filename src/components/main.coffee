@@ -136,3 +136,39 @@ R.component "ChoiceDialog", {
         span className: "choice_label", label
       ]
 }
+
+
+R.component "RevealText", {
+  getDefaultProps: ->
+    {
+      rate: 20
+      text: ""
+    }
+
+  getInitialState: ->
+    { visible_characters: 1 }
+
+  componentDidMount: ->
+    @setState {
+      timer: setInterval =>
+        if @state.visible_characters >= @props.text.length
+          window.clearInterval @state.timer
+          @setState timer: null
+        else
+          @setState visible_characters: @state.visible_characters += 1
+      , @props.rate
+    }
+
+  componentWillUnmount: ->
+    return unless @state.timer
+    window.clearInterval @state.timer
+
+  render: ->
+    div className: "reveal_text_widget", children: [
+      span className: "visible_characters",
+        @props.text.substring 0, @state.visible_characters
+
+      span className: "hidden_characters",
+        @props.text.substring @state.visible_characters
+    ]
+}
