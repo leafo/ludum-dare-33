@@ -24,9 +24,10 @@ R.component "Battle", {
     @dispatch {
       undo_orders: (e, menu) =>
         party = @props.battle.player_party
+        first_member = party.next_living_member()
         prev_player = party.next_living_member @state.current_player, -1
 
-        if prev_player
+        if prev_player && first_member.id != @state.current_player
           @setState current_player: prev_player.id
         else
           @setState command_erroring: true
@@ -35,8 +36,17 @@ R.component "Battle", {
 
       set_orders: (e, order) =>
         party = @props.battle.player_party
-        next_player = party.next_living_member @state.current_player
 
+        if order.first() == "macro"
+          # we only have one macro right now, here's where we'd add more
+          @setState {
+            phase: "executing"
+            orders: Immutable.Map party.members.map (bp) ->
+              [bp.id, Immutable.List ["attack", ["enemy"]]]
+          }
+          return
+
+        next_player = party.next_living_member @state.current_player
         orders = @state.orders.set @state.current_player, order
 
         if next_player
@@ -165,20 +175,23 @@ R.component "BattleParty", {
         top = @state.menu_stack.last()
         orders = @state.order_stack.push opt
 
+        push_menu = (menu) =>
+          @setState {
+            menu_stack: @state.menu_stack.push menu
+            order_stack: orders
+          }
+
         switch top
           when "action"
             switch opt
+              when "macro"
+                push_menu "macro"
+                return
               when "attack"
-                @setState {
-                  menu_stack: @state.menu_stack.push "enemies"
-                  order_stack: orders
-                }
+                push_menu "enemies"
                 return
               when "skill"
-                @setState {
-                  menu_stack: @state.menu_stack.push "players"
-                  order_stack: orders
-                }
+                push_menu "players"
                 return
 
         # fall through, send the orders
@@ -187,28 +200,55 @@ R.component "BattleParty", {
 
     }
 
+  on_first_member: ->
+    first_member = @props.battle.player_party.next_living_member().id
+    @props.current_player == first_member
+
   render_battle_menu: ->
     return unless @props.phase == "enter_commands"
     # TODO: use this to customize menu
     current = @props.battle.player_party.get @props.current_player
+    first_member = @props.battle.player_party.next_living_member().id
 
     menus = for menu, i in @state.menu_stack.toArray()
       top = i == @state.menu_stack.size - 1
 
       switch menu
         when "action"
-          R.ChoiceDialog {
+          R.JointChoiceDialog {
             active: top
+
             classes: if @props.command_erroring
               ["animated shake"]
 
-            choices: [
-              ["Attack", "attack"]
-              ["Magic", "skill"]
-              ["Defend", "defend"]
+            menus: _.compact [
+              {
+                choices: [
+                  ["Attack", "attack"]
+                  ["Magic", "skill"]
+                  ["Defend", "defend"]
+                ]
+              }
+
+              if @on_first_member()
+                {
+                  choices: _.compact [
+                    if @props.battle.player_party.living_members().size > 1
+                      ["Macro", "macro"]
+
+                    ["Escape", "escape"]
+                  ]
+                }
             ]
           }
 
+        when "macro"
+          R.ChoiceDialog {
+            active: top
+            choices: [
+              ["ATK-ALL", "attack-all"]
+            ]
+          }
         when "enemies"
           enemies = @props.battle.enemy_party.living_members().toArray()
 

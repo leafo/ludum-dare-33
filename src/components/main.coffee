@@ -70,6 +70,13 @@ R.component "JointChoiceDialog", {
   ignore_input: ->
     !@props.active
 
+
+  componentWillReceiveProps: (next_props) ->
+    if @state.current_menu >= next_props.menus.length
+      @setState {
+        current_menu: next_props.menus.length - 1
+      }
+
   move_left: ->
     return if @ignore_input()
     next_menu = @state.current_menu - 1
@@ -100,7 +107,7 @@ R.component "JointChoiceDialog", {
     delete @_unbind_keys
 
   render: ->
-    div className: "joint_menu_widget", children: for menu, i in @props.menus
+    div className: "joint_choice_dialog", children: for menu, i in @props.menus
       R.ChoiceDialog @extend_props menu, {
         focus: @state.current_menu == i
       }
