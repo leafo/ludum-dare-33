@@ -253,36 +253,6 @@ body {
         padding: 5px 10px;
     }
 
-    .player_level {
-        background: rgba(black, 0.2);
-        display: inline-block;
-        border-radius: 4px;
-        padding: 0 4px;
-        margin: 1px 0;
-    }
-
-    .player_status {
-        display: flex;
-        align-items: center;
-
-        > :nth-child(1) {
-            flex: 1;
-        }
-
-        > :nth-child(2) {
-            flex: 2;
-        }
-
-        .bar_column {
-            .progress_bar_widget {
-                margin-bottom: 5px;
-                &:last-child {
-                    margin-bottom: 0;
-                }
-            }
-        }
-    }
-
     .menu_columns {
         margin: 10px;
         margin-bottom: 0;
@@ -313,5 +283,35 @@ body {
         .choice_dialog_widget {
             display: block;
         }
+    }
+}
+
+.player_status_widget {
+    display: flex;
+    align-items: center;
+
+    > :nth-child(1) {
+        flex: 1;
+    }
+
+    > :nth-child(2) {
+        flex: 2;
+    }
+
+    .bar_column {
+        .progress_bar_widget {
+            margin-bottom: 5px;
+            &:last-child {
+                margin-bottom: 0;
+            }
+        }
+    }
+
+    .player_level {
+        background: rgba(black, 0.2);
+        display: inline-block;
+        border-radius: 4px;
+        padding: 0 4px;
+        margin: 1px 0;
     }
 }

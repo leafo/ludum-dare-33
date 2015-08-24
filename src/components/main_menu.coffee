@@ -30,26 +30,7 @@ R.component "MainMenu", {
     }
 
   render_player_status: (player) ->
-    div { className: "frame player_status" }, children: [
-      div className: "primary_column",
-        div {}, player.name
-        div {},
-          span className: "player_level", "Lv. #{player.level.get("level")}"
-        "Next: #{player.level.get("next_exp")  - player.level.get("exp")}"
 
-      div className: "bar_column",
-        R.ProgressBar {
-          label: "HP: #{player.stats.get("hp")}/#{player.stats.get("max_hp")}"
-          classes: ["hp_bar"]
-          p: 0.5
-        }
-
-        R.ProgressBar {
-          label: "MP: #{player.stats.get("mp")}/#{player.stats.get("max_mp")}"
-          classes: ["mp_bar"]
-          p: 0.5
-        }
-    ]
 
   render: ->
     div className: "main_menu_widget", children: [
@@ -76,8 +57,36 @@ R.component "MainMenu", {
         ]
 
         div className: "player_party",
-          content: (@render_player_status(p) for p in @props.party.to_array())
+          content: (R.PlayerStatus { player: p } for p in @props.party.to_array())
         ]
     ]
 }
+
+
+R.component "PlayerStatus", {
+  render: ->
+    player = @props.player
+
+    div className: "player_status_widget frame", children: [
+      div className: "primary_column",
+        div {}, player.name
+        div {},
+          span className: "player_level", "Lv. #{player.level.get("level")}"
+        "Next: #{player.level.get("next_exp")  - player.level.get("exp")}"
+
+      div className: "bar_column",
+        R.ProgressBar {
+          label: "HP: #{player.stats.get("hp")}/#{player.stats.get("max_hp")}"
+          classes: ["hp_bar"]
+          p: 0.5
+        }
+
+        R.ProgressBar {
+          label: "MP: #{player.stats.get("mp")}/#{player.stats.get("max_mp")}"
+          classes: ["mp_bar"]
+          p: 0.5
+        }
+    ]
+}
+
 
