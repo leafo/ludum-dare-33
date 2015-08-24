@@ -140,7 +140,7 @@ R.component "BattleEnemyList", {
 
   render_enemies: ->
     for enemy in @props.battle.enemy_party.to_array()
-      stats = enemy.battle_stats
+      stats = enemy.stats
 
       div { className: "enemy_row" }, "#{enemy.entity.name} (#{stats.get("hp")}/#{stats.get("max_hp")})"
 }
@@ -294,7 +294,7 @@ R.component "BattleParty", {
   render_party: ->
     frames = for battle_player, i in @props.battle.player_party.to_array()
       player = battle_player.entity
-      battle_stats = battle_player.battle_stats
+      stats = battle_player.stats
 
       classes = _.compact([
         if @phase("enter_commands") && @props.current_player == i
@@ -316,7 +316,7 @@ R.component "BattleParty", {
 
         div {}, "#{player.name}"
         div { className: "stat_row" },
-          "HP: #{battle_stats.get("hp")} MP: #{battle_stats.get("mp")}"
+          "HP: #{stats.get("hp")} MP: #{stats.get("mp")}"
       ]
 
     div className: "player_frames", children: frames

@@ -44,8 +44,8 @@ class L.Battle
       player = battle_player.entity
 
       player.stats = player.stats.merge {
-        hp: battle_player.battle_stats.get("hp")
-        mp: battle_player.battle_stats.get("mp")
+        hp: battle_player.stats.get("hp")
+        mp: battle_player.stats.get("mp")
       }
 
       unless player.is_dead()
@@ -116,6 +116,17 @@ class L.Battle
           target = @find_target order[1]
           if target
             target.take_hit battle_entity
+      when "item"
+        =>
+          [_, item, target] = order
+          target = @find_target target
+          [item_idx, item] = item
+
+          if target
+            console.debug "#{battle_entity.entity.name} used #{item.name} on #{target.entity.name}"
+            item.use battle_entity, target
+          else
+            console.debug "failed to find target for item use"
       when "defend"
         # noop
         null
@@ -125,10 +136,11 @@ class L.Battle
 
 class L.BattleEntity
   constructor: (@id, @entity) ->
-    @battle_stats = @entity.stats
+    @stats = @entity.stats
+    @buffs = Immutable.List()
 
   is_dead: =>
-    @battle_stats.get("hp") <= 0
+    @stats.get("hp") <= 0
 
   take_hit: (attacker) ->
     console.debug "#{@entity.name} being hit by #{attacker.entity.name}"
@@ -137,7 +149,7 @@ class L.BattleEntity
     if @defending
       damage = Math.floor damage / 2
 
-    @battle_stats = @battle_stats.merge {
-      hp: Math.max 0, @battle_stats.get("hp") - damage
+    @stats = @stats.merge {
+      hp: Math.max 0, @stats.get("hp") - damage
     }
 

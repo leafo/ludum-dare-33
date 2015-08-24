@@ -33,3 +33,19 @@ class L.Consumable extends L.Item
   name: "unknown food"
   description: "Can be consumed"
 
+  constructor: ->
+    super
+    # heals 15
+    @stats = Immutable.Map {
+      hp: 15
+    }
+
+  use: (user, target) ->
+    target.stats.merge @stats.map (val, name) ->
+      val = target.stats.get(name) + val
+      val = Math.max 0, val
+      if max = target.stats.get "max_#{name}"
+        val = Math.min max, val
+
+      val
+
