@@ -28,7 +28,10 @@ R.component "Battle", {
         prev_player = party.next_living_member @state.current_player, -1
 
         if prev_player && first_member.id != @state.current_player
-          @setState current_player: prev_player.id
+          @setState {
+            current_player: prev_player.id
+            orders: @state.orders.delete prev_player.id
+          }
         else
           @setState command_erroring: true
           $(menu).one "animationend", =>
