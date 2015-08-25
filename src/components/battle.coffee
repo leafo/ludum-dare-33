@@ -212,6 +212,16 @@ R.component "BattleParty", {
     first_member = @props.battle.player_party.next_living_member().id
     @props.current_player == first_member
 
+  used_items: ->
+    @props.orders.toList()
+      .filter (order) =>
+        order.first() == "item"
+      .map (order) => order.get(1)
+
+  available_items: ->
+    @props.game.inventory.consumables()
+      .toOrderedSet().subtract(@used_items()).toList()
+
   render_battle_menu: ->
     return unless @props.phase == "enter_commands"
     # TODO: use this to customize menu
@@ -231,10 +241,11 @@ R.component "BattleParty", {
 
             menus: _.compact [
               {
-                choices: [
+                choices: _.compact [
                   ["Attack", "attack"]
-                  ["Magic", "skill"]
-                  ["Item", "item"]
+                  # ["Magic", "skill"]
+                  unless @available_items().isEmpty()
+                    ["Item", "item"]
                   ["Defend", "defend"]
                 ]
               }
@@ -277,11 +288,17 @@ R.component "BattleParty", {
           }
 
         when "items"
-          items = @props.game.inventory.consumables()
+          stacked_items = @props.game.inventory.stacked_items @available_items()
+
           R.ChoiceDialog {
             active: top
-            choices: for item, i in items.toArray()
-              [item.name, [i, item]]
+            classes: "items_menu"
+            choices: for item_stack in stacked_items.toArray()
+              item = item_stack.first()
+              [
+                "#{item.name} x#{s.numberFormat item_stack.size}"
+                item
+              ]
           }
         else
           throw "unknown menu in stack: #{menu}"

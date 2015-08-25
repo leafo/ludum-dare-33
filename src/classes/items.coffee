@@ -60,7 +60,6 @@ class L.Consumable extends L.Item
     }
 
   use: (user, target) ->
-    console.warn "using", @
     target.stats = target.stats.merge @stats.map (val, name) ->
       val = target.stats.get(name) + val
       val = Math.max 0, val
