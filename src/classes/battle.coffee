@@ -120,7 +120,6 @@ class L.Battle
         =>
           [_, item, target] = order
           target = @find_target target
-          [item_idx, item] = item
 
           if target
             console.debug "#{battle_entity.entity.name} used #{item.name} on #{target.entity.name}"
@@ -144,7 +143,7 @@ class L.BattleEntity
 
   take_hit: (attacker) ->
     console.debug "#{@entity.name} being hit by #{attacker.entity.name}"
-    damage =  12
+    damage =  2
 
     if @defending
       damage = Math.floor damage / 2
