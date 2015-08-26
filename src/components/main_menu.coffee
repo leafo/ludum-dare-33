@@ -40,6 +40,8 @@ R.component "MainMenu", {
 
   dispatch_main_menu: (item) ->
     switch item
+      when "equip"
+        @trigger "set_view", "EquipMenu", {}
       when "inventory"
         @trigger "set_view", "InventoryMenu", {}
       when "status"
