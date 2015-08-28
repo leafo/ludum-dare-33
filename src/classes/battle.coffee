@@ -68,6 +68,10 @@ class L.Battle
     switch idx ? "random"
       when "random"
         party.random_member @rand
+      when "worst_hp"
+        party.wost_hp_member @rand
+      when "best_hp_member"
+        party.wost_hp_member @rand
       else
         t = party.get idx
         if !t || t.is_dead()

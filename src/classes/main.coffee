@@ -154,16 +154,20 @@ class L.Party
   living_members: ->
     @members.filter (e) -> !e.is_dead()
 
+  shuffle_living_members: (rand) ->
+    @living_members().sortBy ->
+      rand.rand_int 1, 1000
+
   is_dead: ->
     @members.every (e) -> e.is_dead()
 
-  best_hp_member: ->
-    @living_members().maxBy (member) =>
-      stats.get("hp") / stats.get("max_hp")
+  best_hp_member: (rand) ->
+    @shuffle_living_members(rand).maxBy (member) =>
+      member.stats.get "hp"
 
-  wost_hp_member: ->
-    @living_members().minBy (member) =>
-      stats.get("hp") / stats.get("max_hp")
+  wost_hp_member: (rand) ->
+    @shuffle_living_members(rand).minBy (member) =>
+      member.stats.get "hp"
 
   random_member: (rand) ->
     living = @living_members()

@@ -45,7 +45,7 @@ R.component "Battle", {
           @setState {
             phase: "executing"
             orders: Immutable.Map party.members.map (bp) ->
-              [bp.id, Immutable.List ["attack", ["enemy"]]]
+              [bp.id, Immutable.List ["attack", ["enemy", "worst_hp"]]]
           }
           return
 
