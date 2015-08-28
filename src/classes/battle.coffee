@@ -1,5 +1,7 @@
 class L.Battle
-  constructor: (@game, enemy_party) ->
+  constructor: (@game, enemy_party, seed) ->
+    @rand = new L.Rand seed
+
     @player_party = new L.Party @game.party.members.map (e, i) ->
       new L.BattleEntity i, e
 
@@ -55,8 +57,6 @@ class L.Battle
 
   # finds battle entity
   find_target: ([type, idx]) ->
-    # TODO: use random member if no idx
-
     party = switch type
       when "enemy"
         @enemy_party
@@ -65,17 +65,19 @@ class L.Battle
       else
         throw "unknown target type: #{type}"
 
-    t = party.get idx
-    if !t || t.is_dead()
-      t = party.living_members().first()
-
-    t
+    switch idx ? "random"
+      when "random"
+        party.random_member @rand
+      else
+        t = party.get idx
+        if !t || t.is_dead()
+          party.living_members().first()
 
   # get a map of player orders,
   # returns mutable array of callbacks :o
   run_turn: (orders) ->
     enemy_orders = @enemy_party.members.map (enemy) ->
-      [enemy.id, ["attack", ["player"]]]
+      [enemy.id, ["attack", ["player", "random"]]]
 
     enemy_orders = Immutable.Map(enemy_orders).toJS()
 

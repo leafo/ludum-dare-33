@@ -157,7 +157,18 @@ class L.Party
   is_dead: ->
     @members.every (e) -> e.is_dead()
 
-  random_member: ->
+  best_hp_member: ->
+    @living_members().maxBy (member) =>
+      stats.get("hp") / stats.get("max_hp")
+
+  wost_hp_member: ->
+    @living_members().minBy (member) =>
+      stats.get("hp") / stats.get("max_hp")
+
+  random_member: (rand) ->
+    living = @living_members()
+    return if living.isEmpty()
+    living.get rand.rand_int 0, living.size - 1
 
   next_living_member: (idx=-1, direction=1) =>
     while true
