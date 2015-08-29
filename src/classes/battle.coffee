@@ -76,6 +76,8 @@ class L.Battle
         t = party.get idx
         if !t || t.is_dead()
           party.living_members().first()
+        else
+          t
 
   # get a map of player orders,
   # returns mutable array of callbacks :o
