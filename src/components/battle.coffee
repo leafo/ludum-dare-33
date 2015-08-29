@@ -82,13 +82,18 @@ R.component "Battle", {
     events ||= @state.events
     next_event = events.first()
     if next_event
-      next_event()
+      change = next_event()
+      if change
+        [target, delta] = change
+        console.log "run event:", target, delta.toJS()
+
       if @props.battle.is_over()
         @end_battle()
       else
         @setState events: events.shift()
         setTimeout =>
           @run_event()
+
         , 100
     else
       # all done, reset

@@ -121,7 +121,9 @@ class L.Battle
         =>
           target = @find_target order[1]
           if target
-            target.take_hit battle_entity
+            stat_delta = target.take_hit battle_entity
+            [target, stat_delta]
+
       when "item"
         =>
           [_, item, target] = order
@@ -129,7 +131,8 @@ class L.Battle
 
           if target
             console.debug "#{battle_entity.entity.name} used #{item.name} on #{target.entity.name}"
-            item.use battle_entity, target
+            stat_delta = item.use battle_entity, target
+            [target, stat_delta]
           else
             console.debug "failed to find target for item use"
       when "defend"
@@ -154,7 +157,12 @@ class L.BattleEntity
     if @defending
       damage = Math.floor damage / 2
 
-    @stats = @stats.merge {
+    new_stats = @stats.merge {
       hp: Math.max 0, @stats.get("hp") - damage
     }
+
+    stat_delta = L.Stats.diff new_stats, @stats
+    @stats = new_stats
+    stat_delta
+
 

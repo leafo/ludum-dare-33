@@ -60,7 +60,7 @@ class L.Consumable extends L.Item
     }
 
   use: (user, target) ->
-    target.stats = target.stats.merge @stats.map (val, name) ->
+    new_stats = @stats.map (val, name) ->
       val = target.stats.get(name) + val
       val = Math.max 0, val
       if max = target.stats.get "max_#{name}"
@@ -68,8 +68,13 @@ class L.Consumable extends L.Item
 
       val
 
+    stat_delta = L.Stats.diff new_stats, target.stats
+    target.stats = target.stats.merge new_stats
+
     if @inventory
       @inventory.remove @
     else
       console.warn "used an item that's not in an inventory"
+
+    stat_delta
 

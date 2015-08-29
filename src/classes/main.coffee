@@ -1,4 +1,6 @@
 
+
+
 L.Stats = (stats={}) ->
   Immutable.Map({
     hp: 0
@@ -12,6 +14,27 @@ L.Stats = (stats={}) ->
     mdef: 0
   }).merge stats
 
+
+L.Stats.keys = [
+  "hp", "mp", "max_hp", "max_mp", "str", "def", "agi", "mag", "mdef"
+]
+
+# a - b
+L.Stats.diff = (a, b) ->
+  deltas = for key in L.Stats.keys
+    a_val = a.get key
+    b_val = b.get key
+    continue unless a_val?
+
+    val = if b_val?
+      a_val - b_val
+    else
+      a_val
+
+    continue if val == 0
+    [key, val]
+
+  Immutable.Map deltas
 
 L.Level = (status={}) ->
   Immutable.Map({
