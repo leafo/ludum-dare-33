@@ -1,4 +1,6 @@
 
+CSSTransitionGroup = React.createFactory React.addons.CSSTransitionGroup
+
 class TimeoutSet
   constructor: (@opts) ->
     @items = Immutable.Set()
@@ -160,13 +162,19 @@ R.component "BattleField", {
 
   render_enemies: ->
     indicators = @props.battle_indicators.to_list().groupBy ([be, damage]) -> be
-    for enemy in @props.battle.enemy_party.to_array()
+    for enemy, idx in @props.battle.enemy_party.to_array()
+      damages = indicators.get(enemy)?.map ([be, damages]) -> damages
+
       classes = _.compact([
         "enemy_sprite"
-        if indicators.get enemy
+        if damages
           "taking_hit"
 
       ]).join " "
+
+      if damages
+        damage_labels = for d, i in damages.toJS()
+          span { className: "damage_text", key: i }, d.hp
 
       div {
         className: classes
@@ -176,6 +184,9 @@ R.component "BattleField", {
           width: "50px"
           height: "50px"
         }
+      }, CSSTransitionGroup {
+        transitionName: "fade_up"
+        children: damage_labels
       }
 }
 

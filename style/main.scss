@@ -234,6 +234,10 @@ body {
         align-items: center;
         justify-content: center;
 
+        .damage_text {
+            @include outline_text(#48505A);
+        }
+
         .enemy_sprite {
             margin: 20px;
 
@@ -485,3 +489,22 @@ body {
         }
     }
 }
+
+.fade_up-enter  {
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.fade_up-enter.fade_up-enter-active {
+    opacity: 1;
+}
+
+.fade_up-leave  {
+    opacity: 1;
+    transition: opacity 0.2s ease;
+}
+
+.fade_up-leave.fade_up-leave-active  {
+    opacity: 0;
+}
+

@@ -1,6 +1,4 @@
 
-
-
 L.Stats = (stats={}) ->
   Immutable.Map({
     hp: 0
