@@ -191,6 +191,10 @@ body {
                     top: -5px;
                 }
 
+                &.taking_hit {
+                    box-shadow: 0 0 0 10px blue;
+                }
+
                 &.dead {
                     @include prefixed(filter, grayscale(100%));
                 }
@@ -232,6 +236,10 @@ body {
 
         .enemy_sprite {
             margin: 20px;
+
+            &.taking_hit {
+                box-shadow: 0 0 0 10px blue;
+            }
         }
     }
 }

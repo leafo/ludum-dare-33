@@ -1,4 +1,31 @@
 
+class TimeoutSet
+  constructor: (@opts) ->
+    @items = Immutable.Set()
+    @timeouts = Immutable.Set()
+
+  add: (value, timeout=0) ->
+    return if @items.includes value
+
+    @items = @items.add value
+    @opts.on_update?()
+
+    t = window.setTimeout =>
+      @items = @items.remove value
+      @timeouts = @timeouts.remove t
+      @opts.on_update?()
+    , timeout
+
+  to_array: ->
+    @items.toArray()
+
+  to_list: ->
+    @items.toList()
+
+  cleanup: ->
+    for timeout in @state.indicator_timeouts.toJS()
+      window.clearTimeout timeout
+
 R.component "Battle", {
   propTypes: {
     party: React.PropTypes.any.isRequired
@@ -12,6 +39,8 @@ R.component "Battle", {
       current_player: first_member.id
       orders: Immutable.Map {}
       events: null
+
+      battle_indicators: new TimeoutSet on_update: => @forceUpdate()
     }
 
   componentDidUpdate: (prev_props, prev_state) ->
@@ -19,6 +48,10 @@ R.component "Battle", {
       events = @props.battle.run_turn @state.orders.toJS()
       console.debug "Got #{events.size} events..."
       @run_event events
+
+  componentWillUnmount: ->
+    for timeout in @state.indicator_timeouts.toJS()
+      clearTimeout timeout
 
   componentDidMount: ->
     @dispatch {
@@ -85,7 +118,7 @@ R.component "Battle", {
       change = next_event()
       if change
         [target, delta] = change
-        console.log "run event:", target, delta.toJS()
+        @state.battle_indicators.add change, 500
 
       if @props.battle.is_over()
         @end_battle()
@@ -126,9 +159,13 @@ R.component "BattleField", {
     div className: "battle_field_widget", children: @render_enemies()
 
   render_enemies: ->
-    for enemy, idx in @props.battle.enemy_party.to_array()
+    indicators = @props.battle_indicators.to_list().groupBy ([be, damage]) -> be
+    for enemy in @props.battle.enemy_party.to_array()
       classes = _.compact([
         "enemy_sprite"
+        if indicators.get enemy
+          "taking_hit"
+
       ]).join " "
 
       div {
@@ -317,6 +354,8 @@ R.component "BattleParty", {
     name == @props.phase
 
   render_party: ->
+    indicators = @props.battle_indicators.to_list().groupBy ([be, damage]) -> be
+
     frames = for battle_player, i in @props.battle.player_party.to_array()
       player = battle_player.entity
       stats = battle_player.stats
@@ -324,6 +363,9 @@ R.component "BattleParty", {
       classes = _.compact([
         if @phase("enter_commands") && @props.current_player == i
           "choosing_order"
+
+        if indicators.get battle_player
+          "taking_hit"
 
         if battle_player.is_dead()
           "dead"
